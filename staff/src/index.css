@@ -2,68 +2,138 @@
 @tailwind components;
 @tailwind utilities;
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
 
 .auth-one-bg {
-  background-image: url('assets/images/login-bg.webp');
+  background-image: url('/assets/images/login-bg.webp');
   background-position: center;
   background-size: cover;
-  }
-  .auth-one-bg .bg-overlay {
-  background: -webkit-gradient(linear,left top,right top,from(#2196F3),to(#009688));
-  background: linear-gradient(to right,#2196F3,#009688);
+}
+
+.auth-one-bg .bg-overlay {
+  background: -webkit-gradient(linear, left top, right top, from(#2196F3), to(#009688));
+  background: linear-gradient(to right, #2196F3, #009688);
   opacity: .8;
-  }
-  .fadeInDown {
+}
+
+.fadeInDown {
   animation-name: fadeInDown;
   animation-duration: 1.5s;
   animation-fill-mode: both;
-  }
-  @keyframes fadeInDown {
+}
+
+@keyframes fadeInDown {
   0% {
-  opacity: 0;
-  transform: translate3d(0, -100%, 0);
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
   }
-  50%{
-  opacity: .5;
-  transform: translate3d(0, 20%, 0);
+
+  50% {
+    opacity: .5;
+    transform: translate3d(0, 20%, 0);
   }
+
   100% {
-  opacity: 1;
-  transform: none;
+    opacity: 1;
+    transform: none;
   }
-  }
-  /* Fade-in Animation */
-  @keyframes fadeIn {
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
   from {
-  opacity:0;
+    opacity: 0;
   }
+
   to {
-  opacity:1;
+    opacity: 1;
   }
-  }
-  .fadeIn {
-  opacity:0;
+}
+
+.fadeIn {
+  opacity: 0;
   animation: fadeIn ease-in 1s;
   animation-fill-mode: forwards;
   animation-duration: 1s;
-  }
-  .fadeIn.first {
+}
+
+.fadeIn.first {
   animation-delay: 0.4s;
-  }
-  .fadeIn.second {
+}
+
+.fadeIn.second {
   animation-delay: 0.6s;
-  }
-  .fadeIn.third {
+}
+
+.fadeIn.third {
   animation-delay: 0.8s;
-  }
-  .fadeIn.fourth {
+}
+
+.fadeIn.fourth {
   animation-delay: 1s;
-  }
-  /* Fade-in Animation */
-  .auth-page-wrapper .auth-page-content{
+}
+
+/* Fade-in Animation */
+.auth-page-wrapper .auth-page-content {
   position: inherit;
-  }
-  .auth-one-bg-position{
+}
+
+.auth-one-bg-position {
   height: 500px;
   z-index: 0;
-  }
+}
+
+.collapse {
+  visibility: visible;
+}
+
+.coming-soon-text {
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 3px 4px #b4bdb9;
+}
+
+#light canvas {
+  max-height: 55%;
+  position: relative;
+  overflow: hidden;
+}
+
+.dropzone {
+  border: 1px dashed rgb(175 175 175 / 80%);
+}
+
+
+/* new enquiry */
+.choices {
+  margin-bottom: 0;
+}
+
+a {
+  cursor: pointer;
+}
+
+#requestEnqDiv {
+  padding: 0 0.5rem;
+  display: none;
+}
+
+
+.timeline-2 .timeline-box {
+  margin: 5px 62px;
+  padding: 10px 20px;
+}
+
+lord-icon {
+  height: 7.5rem !important;
+  width: 7.5rem !important;
+}
