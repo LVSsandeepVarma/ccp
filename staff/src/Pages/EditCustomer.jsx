@@ -1,10 +1,18 @@
 import Header from "./Header";
 import "../assets/customersEdit.css"
 import Select from "react-select"
+import { useCustomerDetailsQuery } from "../services/api";
+import {useParams} from "react-router-dom"
+import Loader from "./Loader";
+import ProfileForm from "./customerForms/ProfileForm";
 
 export default function EditCustomer() {
+  const params = useParams()
+  const { data: customerData, isLoading, error } = useCustomerDetailsQuery({ id: params?.id, type: "PROFILE" })
+  console.log(customerData, error)
   return (
     <>
+      {isLoading && <Loader />}
       <div className="layout-wrapper">
         <Header />
         <div className="main-content">
@@ -15,7 +23,8 @@ export default function EditCustomer() {
                   <div className="card">
                     <div className="card-header">
                       <h4 className="card-title mb-1">
-                        #589658 - Mohamed Momin
+                        #589658 - {customerData?.data?.customer?.first_name}{" "}
+                        {customerData?.data?.customer?.last_name}
                       </h4>
                       <p className="text-muted mb-0">Customer from Lead</p>
                     </div>
@@ -204,233 +213,9 @@ export default function EditCustomer() {
                                   id="customer-details"
                                   role="tabpanel"
                                 >
-                                  <div className="row">
-                                    <div className="col-xxl-3 col-md-6">
-                                      <label
-                                        htmlFor="placeholderInput"
-                                        className="form-label"
-                                      >
-                                        Company
-                                      </label>
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        id=""
-                                        placeholder="Company Name"
-                                      />
-                                    </div>
-                                    <div className="col-xxl-3 col-md-6">
-                                      <label
-                                        htmlFor="placeholderInput"
-                                        className="form-label"
-                                      >
-                                        Phone Number
-                                      </label>
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        id=""
-                                        placeholder="Phone Number"
-                                      />
-                                    </div>
-                                    <div className="col-xxl-3 col-md-6">
-                                      <label
-                                        htmlFor="placeholderInput"
-                                        className="form-label"
-                                      >
-                                        VAT/GST Number
-                                      </label>
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        id=""
-                                        placeholder="VAT/GST Number"
-                                      />
-                                    </div>
-                                    <div className="col-xxl-3 col-md-6">
-                                      <label
-                                        htmlFor="placeholderInput"
-                                        className="form-label"
-                                      >
-                                        Website
-                                      </label>
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        id=""
-                                        placeholder="Company Website"
-                                      />
-                                    </div>
-                                    <div className="col-xxl-12 col-md-12 mt-3">
-                                      <label
-                                        htmlFor="placeholderInput"
-                                        className="form-label"
-                                      >
-                                        Company Address
-                                      </label>
-                                      <textarea
-                                        name="name"
-                                        rows="2"
-                                        className="form-control"
-                                        placeholder="Address"
-                                      ></textarea>
-                                    </div>
-                                    <div className="col-xxl-3 col-md-6 mt-3">
-                                      <label
-                                        htmlFor="placeholderInput"
-                                        className="form-label"
-                                      >
-                                        City
-                                      </label>
-                                      <Select
-                                        className="js-example-basic-single"
-                                        name="city"
-                                        placeholder="Select City"
-                                        options={[
-                                          {
-                                            value: "Alabama",
-                                            label: "Alabama",
-                                          },
-                                          {
-                                            value: "Madrid",
-                                            label: "Madrid",
-                                          },
-                                          {
-                                            value: "Toronto",
-                                            label: "Toronto",
-                                          },
-                                          {
-                                            value: "Londan",
-                                            label: "Londan",
-                                          },
-                                          {
-                                            value: "Wyoming",
-                                            label: "Wyoming",
-                                          },
-                                        ]}
-                                      />
-                                    </div>
-                                    <div className="col-xxl-3 col-md-6 mt-3">
-                                      <label
-                                        htmlFor="placeholderInput"
-                                        className="form-label"
-                                      >
-                                        State
-                                      </label>
-                                      <Select
-                                        className="js-example-basic-single"
-                                        name="state"
-                                        placeholder="Select State"
-                                        options={[
-                                          {
-                                            value: "Alabama",
-                                            label: "Alabama",
-                                          },
-                                          {
-                                            value: "Madrid",
-                                            label: "Madrid",
-                                          },
-                                          {
-                                            value: "Toronto",
-                                            label: "Toronto",
-                                          },
-                                          {
-                                            value: "Londan",
-                                            label: "Londan",
-                                          },
-                                          {
-                                            value: "Wyoming",
-                                            label: "Wyoming",
-                                          },
-                                        ]}
-                                      />
-                                    </div>
-                                    <div className="col-xxl-3 col-md-6 mt-3">
-                                      <label
-                                        htmlFor="placeholderInput"
-                                        className="form-label"
-                                      >
-                                        Country
-                                      </label>
-                                      <Select
-                                        className="js-example-basic-single"
-                                        name="country"
-                                        placeholder="Select Country"
-                                        options={[
-                                          {
-                                            value: "Alabama",
-                                            label: "Alabama",
-                                          },
-                                          {
-                                            value: "Madrid",
-                                            label: "Madrid",
-                                          },
-                                          {
-                                            value: "Toronto",
-                                            label: "Toronto",
-                                          },
-                                          {
-                                            value: "Londan",
-                                            label: "Londan",
-                                          },
-                                          {
-                                            value: "Wyoming",
-                                            label: "Wyoming",
-                                          },
-                                        ]}
-                                      />
-                                    </div>
-                                    <div className="col-xxl-3 col-md-6 mt-3">
-                                      <label
-                                        htmlFor="placeholderInput"
-                                        className="form-label"
-                                      >
-                                        Zip Code
-                                      </label>
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        id=""
-                                        placeholder="Zip Code"
-                                      />
-                                    </div>
-                                    <div className="col-xxl-3 col-md-6 mt-3">
-                                      <label
-                                        htmlFor="placeholderInput"
-                                        className="form-label"
-                                      >
-                                        Currency
-                                      </label>
-                                      <Select
-                                        className="js-example-basic-single"
-                                        name="currency"
-                                        placeholder="Select Currency"
-                                        options={[
-                                          {
-                                            value: "USD",
-                                            label: "USD ($)",
-                                          },
-                                          {
-                                            value: "INR",
-                                            label: "INR (₹)",
-                                          },
-                                          {
-                                            value: "EUR",
-                                            label: "EUR (€)",
-                                          },
-                                        ]}
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="text-end mt-3">
-                                    <button
-                                      type="button"
-                                      className="btn btn-sm btn-info bg-info"
-                                      name="button"
-                                    >
-                                      Save
-                                    </button>
-                                  </div>
+                                  <ProfileForm
+                                    userInfo={customerData?.data?.customer}
+                                  />
                                 </div>
                                 <div
                                   className="tab-pane"
@@ -3046,8 +2831,7 @@ export default function EditCustomer() {
             <div className="container-fluid">
               <div className="row">
                 <div className="col-sm-6">
-                  {new Date().getFullYear()} ©
-                  All Rights Reserved.
+                  {new Date().getFullYear()} © All Rights Reserved.
                 </div>
                 <div className="col-sm-6">
                   <div className="text-sm-end d-none d-sm-block">

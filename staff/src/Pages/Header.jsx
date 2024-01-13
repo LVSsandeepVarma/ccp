@@ -14,6 +14,7 @@ export default function Header() {
   const { data, loading, error } = useGetUserInfoQuery();
   console.log(data?.data?.staff, loading, error);
 
+
     useEffect(() => {
       const handleBodyClass = () => {
         if (toggleNavbar) {

@@ -174,7 +174,7 @@ export default function Signin(){
                   <div className="text-center mt-sm-5 mb-4 text-white-50">
                     <div>
                       <a href="index.html" className="d-inline-block auth-logo">
-                        <img src="assets/images/logo-m.webp" alt="" height="" />
+                        <img src="/assets/images/logo-m.webp" alt="" height="" />
                       </a>
                     </div>
                   </div>

@@ -27,7 +27,7 @@ export default function Help() {
                                         </div>
                                         <div className="col-xxl-3 ms-auto">
                                             <div className="mb-n5 pb-1 faq-img d-none d-xxl-block">
-                                                <img src="assets/images/faq-img.png" alt="" className="img-fluid"/>
+                                                <img src="/assets/images/faq-img.png" alt="" className="img-fluid"/>
                                             </div>
                                         </div>
                                     </div>

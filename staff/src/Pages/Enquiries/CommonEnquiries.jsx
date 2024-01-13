@@ -1,11 +1,18 @@
 /* eslint-disable react/prop-types */
+import { useState } from "react";
 import { useEnquiriesQuery } from "../../services/api";
 import Header from "../Header";
 import CommonTable from "./CommonTable";
+import CreateCustomer from "./CreateCustomer";
 
-export default function Enquiries({type}){
+export default function Enquiries({ type }) {
+  const [enqSelected, setEnqSelected] = useState()
    console.log(type)
 
+  const enquirySelected = (row) => {
+    console.log(row, "enqSelected")
+    setEnqSelected(row)
+  }
 
   
 
@@ -194,7 +201,11 @@ export default function Enquiries({type}){
                 </div>
                 {/* <!--end row--> */}
                 <div className="row">
-                  <div className="col-lg-9">
+                  <div
+                    className={`${
+                      enqSelected ? "col-lg-9 slideAnim" : "col-lg-12"
+                    }`}
+                  >
                     <div className="card" id="tasksList">
                       <div className="card-header border-0">
                         <div className="d-flex align-items-center">
@@ -210,6 +221,7 @@ export default function Enquiries({type}){
                           <CommonTable
                             enquiriesData={enquiriesData}
                             type={type}
+                            enquirySelect={enquirySelected}
                           />
                           {/* <!--end table--> */}
                           <div className="noresult hidden">
@@ -235,137 +247,141 @@ export default function Enquiries({type}){
                     </div>
                     {/* <!--end card--> */}
                   </div>
-                  <div className="col-lg-3">
-                    <div className="card" id="contact-view-detail">
-                      <div className="card-body text-center">
-                        <div className="position-relative d-inline-block">
-                          <img
-                            src="assets/images/users/avatar-10.jpg"
-                            alt=""
-                            className="avatar-lg rounded-circle img-thumbnail"
-                          />
-                          <span className="contact-active position-absolute rounded-circle bg-success">
-                            <span className="visually-hidden"></span>
-                          </span>
+                  {enqSelected && (
+                    <div className="col-lg-3 pulse ">
+                      <div className="card" id="contact-view-detail">
+                        <div className="card-body text-center">
+                          <div className="position-relative d-inline-block">
+                            <img
+                              src="/assets/images/users/avatar-10.jpg"
+                              alt=""
+                              className="avatar-lg rounded-circle img-thumbnail"
+                            />
+                            <span className="contact-active position-absolute rounded-circle bg-success">
+                              <span className="visually-hidden"></span>
+                            </span>
+                          </div>
+                          <h5 className="mt-4 h5">{enqSelected?.name}</h5>
+                          {/* <!-- <p class="text-muted">Nesta Technologies</p> --> */}
+                          <ul className="list-inline mb-0">
+                            <li className="list-inline-item avatar-xs">
+                              <a
+                                href="javascript:void(0);"
+                                className="avatar-title bg-soft-success text-success fs-15 rounded"
+                              >
+                                <i className="ri-phone-line"></i>
+                              </a>
+                            </li>
+                            <li className="list-inline-item avatar-xs">
+                              <a
+                                href="javascript:void(0);"
+                                className="avatar-title bg-soft-danger text-danger fs-15 rounded"
+                              >
+                                <i className="ri-mail-line"></i>
+                              </a>
+                            </li>
+                            <li className="list-inline-item avatar-xs">
+                              <a
+                                href="javascript:void(0);"
+                                className="avatar-title bg-soft-warning text-warning fs-15 rounded"
+                              >
+                                <i className="ri-question-answer-line"></i>
+                              </a>
+                            </li>
+                          </ul>
                         </div>
-                        <h5 className="mt-4 h5">Mohamed Momin</h5>
-                        {/* <!-- <p class="text-muted">Nesta Technologies</p> --> */}
-                        <ul className="list-inline mb-0">
-                          <li className="list-inline-item avatar-xs">
-                            <a
-                              href="javascript:void(0);"
-                              className="avatar-title bg-soft-success text-success fs-15 rounded"
-                            >
-                              <i className="ri-phone-line"></i>
-                            </a>
-                          </li>
-                          <li className="list-inline-item avatar-xs">
-                            <a
-                              href="javascript:void(0);"
-                              className="avatar-title bg-soft-danger text-danger fs-15 rounded"
-                            >
-                              <i className="ri-mail-line"></i>
-                            </a>
-                          </li>
-                          <li className="list-inline-item avatar-xs">
-                            <a
-                              href="javascript:void(0);"
-                              className="avatar-title bg-soft-warning text-warning fs-15 rounded"
-                            >
-                              <i className="ri-question-answer-line"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="card-body">
-                        {/* <!-- <h6 class="text-muted text-uppercase fw-semibold mb-3">Personal Information</h6> --> */}
-                        {/* <!-- <p class="text-muted mb-4">Hello, I'm Tonya Noble, The most effective objective is one that is tailored to the job you are applying for. It states what kind of career you are seeking, and what skills and experiences.</p> --> */}
-                        <div className="table-responsive table-card">
-                          <table className="table table-borderless mb-0">
-                            <tbody>
-                              <tr>
-                                <td
-                                  className="fw-bold py-1 text-start"
-                                  width="200"
-                                  scope="row"
-                                >
-                                  Email ID
-                                </td>
-                                <td className="py-1">
-                                  Momin@gleamglobalservicesindia.com
-                                </td>
-                              </tr>
-                              <tr>
-                                <td
-                                  className="fw-bold py-1 text-start"
-                                  scope="row"
-                                >
-                                  Phone No
-                                </td>
-                                <td className="py-1 text-start">9036183631</td>
-                              </tr>
-                              <tr>
-                                <td
-                                  valign="top"
-                                  className="fw-bold text-start"
-                                  scope="row"
-                                >
-                                  Address
-                                </td>
-                                <td className="py-1 text-start">
-                                  No.3 FC, 401, level-4 RAGHAVA BUILDING, 4Th
-                                  Floor, Near Airtel Showroom, Ramamurthy Nagar,
-                                  Bengaluru, Karnataka - 560016.
-                                </td>
-                              </tr>
-                              <tr>
-                                <td
-                                  className="fw-bold py-1 text-start"
-                                  scope="row"
-                                >
-                                  Status
-                                </td>
-                                <td className="py-1 text-start">
-                                  <span className="badge badge-soft-success fs-12">
-                                    {type}
-                                  </span>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td
-                                  className="fw-bold py-1 text-start"
-                                  scope="row"
-                                >
-                                  Date
-                                </td>
-                                <td className="py-1 text-start">
-                                  23 August, 2023
-                                </td>
-                              </tr>
-                              <tr>
-                                <td
-                                  className="fw-bold py-1 text-start"
-                                  scope="row"
-                                >
-                                  Last Contacted
-                                </td>
-                                <td className="py-1 text-start">
-                                  15 Dec, 2021{" "}
-                                  <small className="text-muted">08:58AM</small>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
+                        <div className="card-body">
+                          {/* <!-- <h6 class="text-muted text-uppercase fw-semibold mb-3">Personal Information</h6> --> */}
+                          {/* <!-- <p class="text-muted mb-4">Hello, I'm Tonya Noble, The most effective objective is one that is tailored to the job you are applying for. It states what kind of career you are seeking, and what skills and experiences.</p> --> */}
+                          <div className="table-responsive table-card">
+                            <table className="table table-borderless mb-0">
+                              <tbody>
+                                <tr>
+                                  <td
+                                    className="fw-bold py-1 text-start"
+                                    width="200"
+                                    scope="row"
+                                  >
+                                    Email ID
+                                  </td>
+                                  <td className="py-1 text-start">
+                                    {enqSelected?.email}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    className="fw-bold py-1 text-start"
+                                    scope="row"
+                                  >
+                                    Phone No
+                                  </td>
+                                  <td className="py-1 text-start">
+                                    {enqSelected?.phone}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    valign="top"
+                                    className="fw-bold text-start"
+                                    scope="row"
+                                  >
+                                    Address
+                                  </td>
+                                  <td className="py-1 text-start">
+                                    {enqSelected?.address}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    className="fw-bold py-1 text-start"
+                                    scope="row"
+                                  >
+                                    Status
+                                  </td>
+                                  <td className="py-1 text-start">
+                                    <span className="badge badge-soft-success fs-12">
+                                      {type}
+                                    </span>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    className="fw-bold py-1 text-start"
+                                    scope="row"
+                                  >
+                                    Date
+                                  </td>
+                                  <td className="py-1 text-start">
+                                    23 August, 2023
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    className="fw-bold py-1 text-start"
+                                    scope="row"
+                                  >
+                                    Last Contacted
+                                  </td>
+                                  <td className="py-1 text-start">
+                                    15 Dec, 2021{" "}
+                                    <small className="text-muted">
+                                      08:58AM
+                                    </small>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
+                      {/* <!--end card--> */}
                     </div>
-                    {/* <!--end card--> */}
-                  </div>
+                  )}
                   {/* <!--end col--> */}
                 </div>
                 {/* <!-- end row --> */}
                 {/* <!-- Modal --> */}
-                
+
                 {/* <!--end create taks--> */}
 
                 {/* <!-- Convert to Customer Modal --> */}
@@ -376,225 +392,7 @@ export default function Enquiries({type}){
                   aria-labelledby="createTaskLabel"
                   aria-hidden="true"
                 >
-                  <div className="modal-dialog modal-dialog-centered modal-xl">
-                    <div className="modal-content border-0 bg-[#fbf7f4]">
-                      <div className="modal-header p-3 bg-soft-success">
-                        <h5 className="modal-title h5" id="createTaskLabel">
-                          Create Customer
-                        </h5>
-                      </div>
-                      <div className="modal-body">
-                        <div
-                          id="task-error-msg"
-                          className="alert alert-danger py-2"
-                        ></div>
-                        <form autoComplete="off" action="" id="">
-                          {/* <!-- <div class="text-danger">
-                                 * marked are mandatory fields
-                               </div> --> */}
-                          <div className="row">
-                            <div className="col-lg-3">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  First Name
-                                  <span className="text-danger">*</span>{" "}
-                                </label>
-                                <input
-                                  type="text"
-                                  id=""
-                                  className="form-control"
-                                  placeholder="Enter First Name"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-3">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  Last Name
-                                  <span className="text-danger">*</span>
-                                </label>
-                                <input
-                                  type="text"
-                                  id=""
-                                  className="form-control"
-                                  placeholder="Enter Last Name"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-3">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  Position
-                                </label>
-                                <input
-                                  type="text"
-                                  id=""
-                                  className="form-control"
-                                  placeholder="Enter Position"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-3">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  Phone Number
-                                  <span className="text-danger">*</span>
-                                </label>
-                                <input
-                                  type="text"
-                                  id=""
-                                  className="form-control"
-                                  placeholder="Enter Phone Number"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-4">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  Email<span className="text-danger">*</span>
-                                </label>
-                                <input
-                                  type="email"
-                                  id=""
-                                  className="form-control"
-                                  placeholder="Enter Email"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-4">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  Company
-                                </label>
-                                <input
-                                  type="text"
-                                  id=""
-                                  className="form-control"
-                                  placeholder="Enter Company"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-4">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  Website
-                                </label>
-                                <input
-                                  type="text"
-                                  id=""
-                                  className="form-control"
-                                  placeholder="Enter Website"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-12-lg">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  Address
-                                </label>
-                                <textarea
-                                  name="name"
-                                  className="form-control"
-                                  rows=""
-                                  cols=""
-                                ></textarea>
-                              </div>
-                            </div>
-                            <div className="col-lg-3">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  City
-                                </label>
-                                <select
-                                  className="js-example-basic-single"
-                                  name="reminderFor"
-                                >
-                                  <option value="" disabled selected>
-                                    Select City
-                                  </option>
-                                  <option value="City 1">City 1</option>
-                                  <option value="City 2">City 2</option>
-                                  <option value="City 3">City 3</option>
-                                  <option value="City 4">City 4</option>
-                                  <option value="City 5">City 5</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div className="col-lg-3">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  State
-                                </label>
-                                <select
-                                  className="js-example-basic-single"
-                                  name="reminderFor"
-                                >
-                                  <option value="" disabled selected>
-                                    Select State
-                                  </option>
-                                  <option value="State 1">State 1</option>
-                                  <option value="State 2">State 2</option>
-                                  <option value="State 3">State 3</option>
-                                  <option value="State 4">State 4</option>
-                                  <option value="State 5">State 5</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div className="col-lg-3">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  Country
-                                </label>
-                                <select
-                                  className="js-example-basic-single"
-                                  name="reminderFor"
-                                >
-                                  <option value="" disabled selected>
-                                    Select Country
-                                  </option>
-                                  <option value="Country 1">Country 1</option>
-                                  <option value="Country 2">Country 2</option>
-                                  <option value="Country 3">Country 3</option>
-                                  <option value="Country 4">Country 4</option>
-                                  <option value="Country 5">Country 5</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div className="col-lg-3">
-                              <div className="mb-3">
-                                <label htmlFor="" className="form-label">
-                                  Zip Code
-                                </label>
-                                <input
-                                  type="text"
-                                  id=""
-                                  className="form-control"
-                                  placeholder="Enter Zip Code"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="hstack gap-2 justify-content-end">
-                            <button
-                              type="button"
-                              className="btn btn-ghost-danger"
-                              data-bs-dismiss="modal"
-                            >
-                              <i className="ri-close-fill align-bottom"></i>{" "}
-                              Cancel
-                            </button>
-                            <button
-                              type="submit"
-                              className="btn btn-primary bg-primary"
-                            >
-                              <i className="mdi mdi-account-edit-outline align-middle fs-15 me-1"></i>
-                              Convert to Customer
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
+                  <CreateCustomer />
                 </div>
                 {/* <!-- Convert to Customer Modal End --> */}
               </div>

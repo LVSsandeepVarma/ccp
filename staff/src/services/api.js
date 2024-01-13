@@ -7,9 +7,10 @@ const onQueryStartedErrorToast = async(args, { queryFulfilled }) => {
     console.log("inside querystared")
     await queryFulfilled;
   } catch (error) {
-    console.log(error, "queryerror")
-    if (error?.error?.status == 401) {
-      window.location.href="/session-expired"
+    console.log(error?.error?.data?.message, "queryerror");
+    if (error?.error?.data?.message == "Unauthenticated.") {
+      localStorage.removeItem("staff_auth_token")
+      window.location.href = "/session-expired";
     }
     // handle error here, dispatch toast message
   }
@@ -58,14 +59,28 @@ export const api = createApi({
     }),
     enquiriesPagination: builder.query({
       query: (arg) => ({
-        url: `/enquiries/by-page-type?type=${arg}&page=${
-          arg}`,
+        url: `/enquiries/by-page-type?type=${arg.type}&page=${arg.no}`,
       }),
       onQueryStarted: onQueryStartedErrorToast,
     }),
     addEnquiry: builder.mutation({
       query: ({ data }) => ({
         url: "/enquiries/add-enq",
+        method: "POST",
+        body: data,
+        formData: true,
+        onSuccess: (res) => {
+          console.log("success", res);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      }),
+      middleware: bearerMiddleware,
+    }),
+    createCustomer: builder.mutation({
+      query: ({ data }) => ({
+        url: "/enquiries/convert-to-customer",
         method: "POST",
         body: data,
         formData: true,
@@ -108,8 +123,65 @@ export const api = createApi({
       }),
       middleware: bearerMiddleware,
     }),
+    commentLogs: builder.query({
+      query: (args) => ({
+        url: `/enquiries/view-enq?id=${args?.id}&position=${args?.position}`,
+        onSuccess: (res) => {
+          console.log("success", res);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      }),
+      middleware: bearerMiddleware,
+    }),
+    getCustomers: builder.query({
+      query: () => ({
+        url: `/customers/get`,
+        onSuccess: (res) => {
+          console.log("success", res);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      }),
+      middleware: bearerMiddleware,
+    }),
+    customersPagination: builder.query({
+      query: (no) => ({
+        url: `/customers/get&page=${no}`,
+      }),
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+    customerDetails: builder.query({
+      query: (arg) => ({
+        url: `/customers/view?id=${arg?.id}&type=${arg?.type}`,
+      }),
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+    updateProfile: builder.mutation({
+      query: ({ data }) => ({
+        url: "/customers/update-profile",
+        method: "POST",
+        body: data,
+        formData: true,
+        onSuccess: (res) => {
+          console.log("success", res);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      }),
+      middleware: bearerMiddleware,
+    }),
+    currency: builder.query({
+      query: () => ({
+        url: `get-currencies`,
+      }),
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
     // Add more endpoints as needed
   }),
 });
 
-export const { useGetUserInfoQuery, useLogoutMutation, useEnquiriesQuery, useAddEnquiryMutation, useLazyEnquiriesPaginationQuery, useEditEnquiryMutation, useCommentEnquiryMutation } = api;
+export const { useGetUserInfoQuery, useLogoutMutation, useEnquiriesQuery, useAddEnquiryMutation, useLazyEnquiriesPaginationQuery, useEditEnquiryMutation, useCommentEnquiryMutation, useCommentLogsQuery, useCreateCustomerMutation, useGetCustomersQuery, useLazyCustomersPaginationQuery, useCustomerDetailsQuery, useUpdateProfileMutation, useCurrencyQuery } = api;

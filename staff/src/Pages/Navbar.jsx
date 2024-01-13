@@ -1,6 +1,8 @@
 // import "../../public/assets/css/app.css"
+import { useLocation } from "react-router-dom";
 
 export default function Navbar() {
+  const location = useLocation()
   return (
     <>
       <div className="app-menu navbar-menu">
@@ -12,14 +14,24 @@ export default function Navbar() {
                 <span data-key="t-menu">Menu</span>
               </li>
               <li className="nav-item">
-                <a className="nav-link menu-link active" href="/dashboard">
+                <a
+                  className={`nav-link menu-link ${
+                    location?.pathname === "/" ||
+                    location?.pathname == "/dashboard"
+                      ? "active"
+                      : ""
+                  }`}
+                  href="/dashboard"
+                >
                   <i className="ri-dashboard-2-line"></i>
                   <span data-key="t-dashboard">Dashboard</span>
                 </a>
               </li>
               <li className="nav-item">
                 <a
-                  className="nav-link menu-link collapsed"
+                  className={`nav-link menu-link collapsed ${
+                    location?.pathname?.includes("/enquiries") ? "active" : ""
+                  }`}
                   // href="#sidebarApps"
                   data-bs-toggle="collapse"
                   role="button"
@@ -32,13 +44,17 @@ export default function Navbar() {
                 <div className=" menu-dropdown" id="sidebarApps">
                   <ul className="nav nav-sm flex-column">
                     <li className="nav-item">
-                      <a href="/new" className="nav-link" data-key="t-newenq">
+                      <a
+                        href="/enquiries/new"
+                        className="nav-link"
+                        data-key="t-newenq"
+                      >
                         <i className="mdi mdi-phone"></i> New{" "}
                       </a>
                     </li>
                     <li className="nav-item">
                       <a
-                        href="/ringing"
+                        href="/enquiries/ringing"
                         className="nav-link"
                         data-key="t-ringing"
                       >
@@ -47,7 +63,7 @@ export default function Navbar() {
                     </li>
                     <li className="nav-item">
                       <a
-                        href="/postponed"
+                        href="/enquiries/postponed"
                         className="nav-link"
                         data-key="t-postponed"
                       >
@@ -56,7 +72,7 @@ export default function Navbar() {
                     </li>
                     <li className="nav-item">
                       <a
-                        href="/not-interested"
+                        href="/enquiries/not-interested"
                         className="nav-link"
                         data-key="t-not-interested"
                       >
@@ -65,7 +81,7 @@ export default function Navbar() {
                     </li>
                     <li className="nav-item">
                       <a
-                        href="/signed"
+                        href="/enquiries/signed"
                         className="nav-link"
                         data-key="t-signed"
                       >
@@ -74,7 +90,7 @@ export default function Navbar() {
                     </li>
                     <li className="nav-item">
                       <a
-                        href="/review"
+                        href="/enquiries/review"
                         className="nav-link"
                         data-key="t-review"
                       >
@@ -85,14 +101,21 @@ export default function Navbar() {
                 </div>
               </li>
               <li className="nav-item">
-                <a className="nav-link menu-link" href="/customers">
+                <a
+                  className={`nav-link menu-link ${
+                    location?.pathname?.includes("/customers") ? "active" : ""
+                  }`}
+                  href="/customers"
+                >
                   <i className="mdi mdi-human-queue"></i>
                   <span data-key="t-customers">Customers</span>
                 </a>
               </li>
               <li className="nav-item">
                 <a
-                  className="nav-link menu-link collapsed"
+                  className={`nav-link menu-link collapsed ${
+                    location?.pathname?.includes("/calls") ? "active" : ""
+                  }`}
                   // href="#sidebarApps"
                   data-bs-toggle="collapse"
                   role="button"
@@ -106,7 +129,7 @@ export default function Navbar() {
                   <ul className="nav nav-sm flex-column">
                     <li className="nav-item">
                       <a
-                        href="/inbound"
+                        href="/calls/inbound"
                         className="nav-link"
                         data-key="t-inbound"
                       >
@@ -116,7 +139,7 @@ export default function Navbar() {
                     </li>
                     <li className="nav-item">
                       <a
-                        href="/outbound"
+                        href="/calls/outbound"
                         className="nav-link"
                         data-key="t-outbound"
                       >
@@ -126,7 +149,7 @@ export default function Navbar() {
                     </li>
                     <li className="nav-item">
                       <a
-                        href="/inbound-missed"
+                        href="/calls/inbound-missed"
                         className="nav-link"
                         data-key="t-inbound-missed"
                       >
@@ -136,7 +159,7 @@ export default function Navbar() {
                     </li>
                     <li className="nav-item">
                       <a
-                        href="/outbound-missed"
+                        href="/calls/outbound-missed"
                         className="nav-link"
                         data-key="t-outbound-missed"
                       >
@@ -148,14 +171,21 @@ export default function Navbar() {
                 </div>
               </li>
               <li className="nav-item">
-                <a className="nav-link menu-link" href="/tickets">
+                <a
+                  className={`nav-link menu-link ${
+                    location?.pathname?.includes("/tickets") ? "active" : ""
+                  }`}
+                  href="/tickets"
+                >
                   <i className="mdi mdi-ticket"></i>
                   <span data-key="t-tickets">Tickets</span>
                 </a>
               </li>
               <li className="nav-item">
                 <a
-                  className="nav-link menu-link collapsed"
+                  className={`nav-link menu-link collapsed ${
+                    location?.pathname?.includes("-invoices") ? "active" : ""
+                  }`}
                   // href="#sidebarLayouts"
                   data-bs-toggle="collapse"
                   role="button"
@@ -338,7 +368,9 @@ export default function Navbar() {
               </li>
               <li className="nav-item">
                 <a
-                  className="nav-link menu-link collapsed"
+                  className={`nav-link menu-link collapsed ${
+                    location?.pathname?.includes("/products") ? "active" : ""
+                  }`}
                   // href="#products"
                   data-bs-toggle="collapse"
                   role="button"

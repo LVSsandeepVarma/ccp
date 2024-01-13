@@ -74,12 +74,12 @@ function App() {
           >
             <Route path="/" element={<Dashboard />}></Route>
             <Route path="/dashboard" element={<Dashboard />}></Route>
-            <Route path="/new" element={<NewEnquiries />}></Route>
-            <Route path="/ringing" element={<Ringing />}></Route>
-            <Route path="/postponed" element={<Postponed />}></Route>
-            <Route path="/not-interested" element={<NotInterested />}></Route>
-            <Route path="/review" element={<Review />}></Route>
-            <Route path="/signed" element={<Signed />}></Route>
+            <Route path="/enquiries/new" element={<NewEnquiries />}></Route>
+            <Route path="/enquiries/ringing" element={<Ringing />}></Route>
+            <Route path="/enquiries/postponed" element={<Postponed />}></Route>
+            <Route path="/enquiries/not-interested" element={<NotInterested />}></Route>
+            <Route path="/enquiries/review" element={<Review />}></Route>
+            <Route path="/enquiries/signed" element={<Signed />}></Route>
             {/* enquiries routes end */}
 
             {/* customer routes */}
@@ -87,10 +87,10 @@ function App() {
             <Route path="/edit-customer/:id" element={<EditCustomer />}></Route>
 
             {/* call record routes */}
-            <Route path="/inbound" element={<Inbound />}></Route>
-            <Route path="/outbound" element={<Outbound />}></Route>
-            <Route path="/inbound-missed" element={<InboundMissed />}></Route>
-            <Route path="/outbound-missed" element={<OutboundMissed />}></Route>
+            <Route path="/calls/inbound" element={<Inbound />}></Route>
+            <Route path="/calls/outbound" element={<Outbound />}></Route>
+            <Route path="/calls/inbound-missed" element={<InboundMissed />}></Route>
+            <Route path="/calls/outbound-missed" element={<OutboundMissed />}></Route>
 
             {/* ticket routes */}
             <Route path="/tickets" element={<Tickets />}></Route>

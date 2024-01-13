@@ -276,7 +276,7 @@ export default function CommonCRComponents({type}) {
                             className={`nav-link ${
                               type == "inbound" ? "active" : ""
                             }`}
-                            href="/inbound"
+                            href="/calls/inbound"
                           >
                             <i className="mdi mdi-phone-incoming-outline"></i>{" "}
                             Inbound
@@ -287,7 +287,7 @@ export default function CommonCRComponents({type}) {
                             className={`nav-link align-middle ${
                               type == "outbound" ? "active" : ""
                             }`}
-                            href="/outbound"
+                            href="/calls/outbound"
                           >
                             <i className="mdi mdi-phone-outgoing-outline"></i>{" "}
                             Outbound
@@ -298,7 +298,7 @@ export default function CommonCRComponents({type}) {
                             className={`nav-link align-middle ${
                               type == "inbound missed" ? "active" : ""
                             }`}
-                            href="/inbound-missed"
+                            href="/calls/inbound-missed"
                           >
                             <i className="mdi mdi-phone-missed-outline"></i>{" "}
                             Inbound Missed
@@ -309,7 +309,7 @@ export default function CommonCRComponents({type}) {
                             className={`nav-link align-middle ${
                               type == "outbound missed" ? "active" : ""
                             }`}
-                            href="/outbound-missed"
+                            href="/calls/outbound-missed"
                           >
                             <i className="mdi mdi-phone-missed-outline"></i>{" "}
                             Outbound Missed

@@ -107,7 +107,7 @@ export default function LockScreen() {
                         <div className="text-center mt-sm-5 mb-4 text-white-50">
                             <div>
                                 <a href="index.html" className="d-inline-block auth-logo">
-                                    <img src="assets/images/logo-m.webp" alt="" height=""/>
+                                    <img src="/assets/images/logo-m.webp" alt="" height=""/>
                                 </a>
                             </div>
                             {/* <!-- <p class="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p> --> */}
@@ -126,7 +126,7 @@ export default function LockScreen() {
                                     <p className="text-muted">Enter your password to unlock the screen!</p>
                                 </div>
                                 <div className="user-thumb text-center">
-                                    <img src="assets/images/users/avatar-1.jpg" className="mx-auto rounded-circle img-thumbnail avatar-lg" alt="thumbnail"/>
+                                    <img src="/assets/images/users/avatar-1.jpg" className="mx-auto rounded-circle img-thumbnail avatar-lg" alt="thumbnail"/>
                                     <h5 className="font-size-15 h5 mt-3">Anna Adame</h5>
                                 </div>
                                 <div className="p-2 mt-4">

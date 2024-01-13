@@ -1,17 +1,21 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import SimpleBar from "simplebar-react";
 import Select from "react-select";
+import SimpleBar from "simplebar-react";
 import Flatpickr from "react-flatpickr";
-import { useCommentEnquiryMutation } from "../../services/api";
+import {Modal} from "react-bootstrap"
+import {
+  useCommentEnquiryMutation,
+  useCommentLogsQuery,
+} from "../../services/api";
 
 // eslint-disable-next-line no-unused-vars
-export default function Comments({type}) {
+export default function Comments({type, logData, onHide}) {
   const [apiErr, setApiErr] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const userInfo = JSON.parse(localStorage.getItem("cmtEnq"));
-  console.log(userInfo, type);
+  console.log(userInfo, type, logData);
 
     const {
       register,
@@ -34,6 +38,10 @@ export default function Comments({type}) {
       },
       mode: "all",
     });
+  
+
+  
+    const { data: commentsLogs, isLoading: loading, error: logError } = useCommentLogsQuery({id:logData?.id, position: type?.toUpperCase()});
 
     useEffect(() => {
       if (apiErr) {
@@ -44,13 +52,18 @@ export default function Comments({type}) {
       if (successMsg) {
         setTimeout(() => {
           setSuccessMsg("");
+          onHide()
           // addEnq.current.click();
         }, 2000);
       }
     }, [apiErr, successMsg]);
 
     // eslint-disable-next-line no-unused-vars
-    const [commentEnquiry, { isLoading, error }] = useCommentEnquiryMutation();
+  const [commentEnquiry, { isLoading, error }] = useCommentEnquiryMutation();
+  
+
+
+  console.log(commentsLogs, loading,logError)
 
     const onSubmit = async (data) => {
       // Handle form submission here
@@ -125,16 +138,14 @@ export default function Comments({type}) {
 
   return (
     <>
-      <div className="modal-dialog modal-dialog-centered modal-xl">
-        <div className="modal-content border-0 bg-[#fbf7f4]">
-          <div className="row">
+          <div className="row ">
             <div className="col-lg-6 border-end">
               <div className="modal-header p-3 bg-soft-success">
                 <h5 className="modal-title h5" id="createTaskLabel">
                   Create Comment
                 </h5>
               </div>
-              <div className="modal-body">
+              <Modal.Body className="modal-body">
                 <div
                   id="task-error-msg"
                   className="alert alert-danger py-2"
@@ -221,7 +232,7 @@ export default function Comments({type}) {
                         data-bs-title="John Robles"
                       >
                         <img
-                          src="assets/images/users/avatar-3.jpg"
+                          src="/assets/images/users/avatar-3.jpg"
                           alt=""
                           className="rounded-circle avatar-xs"
                         />
@@ -342,15 +353,14 @@ export default function Comments({type}) {
                     </div>
                   </div>
                 </form>
-              </div>
+              </Modal.Body>
             </div>
             <div className="col-lg-6">
-              <div className="modal-header p-3 bg-soft-success">
+              <Modal.Header className="modal-header p-3 bg-soft-success">
                 <h5 className="modal-title h5" id="createTaskLabel">
                   Comments Logs
                 </h5>
                 <button
-                  type="button"
                   className="btn btn-close font-bold flex items-center text-xl"
                   data-bs-dismiss="modal"
                   id="createTaskBtn-close"
@@ -358,154 +368,48 @@ export default function Comments({type}) {
                 >
                   X
                 </button>
-              </div>
+              </Modal.Header>
               <SimpleBar className="modal-body max-h-[550px]" data-simplebar>
                 <div>
                   <div className="timeline-2">
                     <div className="timeline-continue">
-                      <div className="row timeline-right">
-                        <div className="col-12">
-                          <p className="timeline-date">12 Dec 2021, 02:35AM</p>
-                        </div>
-                        <div className="col-12">
-                          <div className="timeline-box">
-                            <div className="timeline-text">
-                              <h5 className="mb-0 fs-15 h5">Mohamed Momin</h5>
-                              <p className="text-muted mb-0 fs-12">
-                                It makes a statement, it’s impressive graphic
-                                design.
-                              </p>
+                      {commentsLogs?.data?.comments?.map((comment, ind) => (
+                        <div className="row timeline-right" key={ind}>
+                          <div className="col-12">
+                            <p className="timeline-date">
+                              {new Date(comment?.comment_date).toLocaleString(
+                                "en-US",
+                                {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                }
+                              )}
+                            </p>
+                          </div>
+                          <div className="col-12">
+                            <div className="timeline-box">
+                              <div className="timeline-text">
+                                <h5 className="mb-0 fs-15 h5">
+                                  {comment?.candidate}
+                                </h5>
+                                <p className="text-muted mb-0 fs-12">
+                                  {comment?.comment}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-
-                      <div className="row timeline-right">
-                        <div className="col-12">
-                          <p className="timeline-date">12 Dec 2021, 02:35AM</p>
-                        </div>
-                        <div className="col-12">
-                          <div className="timeline-box">
-                            <div className="timeline-text">
-                              <h5 className="mb-0 fs-15 h5">Mohamed Momin</h5>
-                              <p className="text-muted mb-0 fs-12">
-                                It makes a statement, it’s impressive graphic
-                                design.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="row timeline-right">
-                        <div className="col-12">
-                          <p className="timeline-date">12 Dec 2021, 02:35AM</p>
-                        </div>
-                        <div className="col-12">
-                          <div className="timeline-box">
-                            <div className="timeline-text">
-                              <h5 className="mb-0 fs-15 h5">Mohamed Momin</h5>
-                              <p className="text-muted mb-0 fs-12">
-                                It makes a statement, it’s impressive graphic
-                                design.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="row timeline-right">
-                        <div className="col-12">
-                          <p className="timeline-date">12 Dec 2021, 02:35AM</p>
-                        </div>
-                        <div className="col-12">
-                          <div className="timeline-box">
-                            <div className="timeline-text">
-                              <h5 className="mb-0 fs-15 h5">Mohamed Momin</h5>
-                              <p className="text-muted mb-0 fs-12">
-                                It makes a statement, it’s impressive graphic
-                                design.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="row timeline-right">
-                        <div className="col-12">
-                          <p className="timeline-date">12 Dec 2021, 02:35AM</p>
-                        </div>
-                        <div className="col-12">
-                          <div className="timeline-box">
-                            <div className="timeline-text">
-                              <h5 className="mb-0 fs-15 h5">Mohamed Momin</h5>
-                              <p className="text-muted mb-0 fs-12">
-                                It makes a statement, it’s impressive graphic
-                                design.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="row timeline-right">
-                        <div className="col-12">
-                          <p className="timeline-date">12 Dec 2021, 02:35AM</p>
-                        </div>
-                        <div className="col-12">
-                          <div className="timeline-box">
-                            <div className="timeline-text">
-                              <h5 className="mb-0 fs-15 h5">Mohamed Momin</h5>
-                              <p className="text-muted mb-0 fs-12">
-                                It makes a statement, it’s impressive graphic
-                                design.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="row timeline-right">
-                        <div className="col-12">
-                          <p className="timeline-date">12 Dec 2021, 02:35AM</p>
-                        </div>
-                        <div className="col-12">
-                          <div className="timeline-box">
-                            <div className="timeline-text">
-                              <h5 className="mb-0 fs-15 h5">Mohamed Momin</h5>
-                              <p className="text-muted mb-0 fs-12">
-                                It makes a statement, it’s impressive graphic
-                                design.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="row timeline-right">
-                        <div className="col-12">
-                          <p className="timeline-date">12 Dec 2021, 02:35AM</p>
-                        </div>
-                        <div className="col-12">
-                          <div className="timeline-box">
-                            <div className="timeline-text">
-                              <h5 className="mb-0 fs-15 h5">Mohamed Momin</h5>
-                              <p className="text-muted mb-0 fs-12">
-                                It makes a statement, it’s impressive graphic
-                                design.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>
               </SimpleBar>
             </div>
           </div>
-        </div>
-      </div>
     </>
   );
 }

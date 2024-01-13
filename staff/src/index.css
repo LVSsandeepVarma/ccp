@@ -137,3 +137,56 @@ lord-icon {
   height: 7.5rem !important;
   width: 7.5rem !important;
 }
+
+.slideAnim {
+  animation: 1900ms ease-in-out 0s normal none 1 running bounceInRight;
+  /* Capital 'R' */
+  transition: 0.5s !important;
+  display: block !important;
+}
+
+.slideContent {
+  transition: 3s;
+  display: none;
+}
+
+@keyframes bounceInRight {
+  0% {
+    opacity: 0.5;
+    transform: translateX(-100px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateX(20px);
+  }
+
+  80% {
+    transform: translateX(-10px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animateds {
+  animation-duration: 2.5s;
+  animation-fill-mode: both;
+  /* animation-iteration-count: 1; */
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse {
+  animation-name: pulse;
+  animation-duration: 2s;
+}

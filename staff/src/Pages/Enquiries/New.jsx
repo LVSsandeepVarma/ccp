@@ -8,6 +8,7 @@ import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useAddEnquiryMutation, useEnquiriesQuery } from "../../services/api";
 import Loader from "../Loader";
+import {Modal} from "react-bootstrap"
 // import EditEnquiry from "./EditEnquiryForm";
 
 
@@ -16,6 +17,10 @@ export default function NewEnquiries() {
   const loaderState = useSelector((state) => state.loader?.value);
   const [apiErr, setApiErr] = useState("");
   const [successMsg, setSuccessMsg] = useState("")
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   const addEnq = useRef()
   
     const {
@@ -38,6 +43,7 @@ export default function NewEnquiries() {
       setTimeout(() => {
         setSuccessMsg("")
         addEnq.current.click();
+        localStorage.removeItem("editEnq");
       },2000)
     }
   },[
@@ -64,6 +70,9 @@ export default function NewEnquiries() {
       console?.log(response, response?.data?.message);
       if (response?.data?.status) {
         setSuccessMsg(response?.data?.message);
+        setTimeout(() => {
+          handleClose()
+        },1500)
         return;
       }
       if (response?.error?.data?.errors != {}) {
@@ -144,10 +153,10 @@ export default function NewEnquiries() {
                   <div className="d-md-flex justify-content-sm-start align-items-center gap-2">
                     <span className="text-muted">
                       {new Date().toLocaleDateString("en-US", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
                     </span>{" "}
                     | <span className="text-muted">Total Assigned</span> :{" "}
                     <span className="badge bg-secondary fs-13">
@@ -160,9 +169,9 @@ export default function NewEnquiries() {
                     <a
                       id="addEnquiry"
                       ref={addEnq}
-                      data-bs-toggle="modal"
-                      data-bs-target="#signupModals"
+                      
                       className="btn btn-primary bg-primary"
+                      onClick={handleShow}
                     >
                       <i className="ri-add-line align-bottom me-1"></i> Add
                       Enquiry{" "}
@@ -176,27 +185,28 @@ export default function NewEnquiries() {
                 </div>
               </div>
               {/* <!-- end row --> */}
-              <div
+              <Modal
                 id="signupModals"
                 className="modal fade hidden"
                 tabIndex="-1"
                 aria-hidden="true"
+                centered
+                onHide={handleClose}
+                size="lg"
+                show={show}
               >
-                <div className="modal-dialog modal-dialog-centered modal-lg">
+                <div className="modal-dialog modal-dialog-centered modal-lg !m-0">
                   <div className="modal-content border-0 overflow-hidden">
-                    <div className="modal-header p-3">
-                      <h4 className="card-title mb-0">Add New Enquiry</h4>
+                    <Modal.Header className="modal-header p-3" >
+                      <h4 className="card-title mb-0 font-bold">Add New Enquiry</h4>
                       <button
-                        type="button"
                         className="btn-close"
                         data-bs-dismiss="modal"
                         aria-label="Close"
+                        onClick={handleClose}
                       ></button>
-                    </div>
-                    {/* <!-- <div class="alert alert-success  rounded-0 mb-0">
-                              <p class="mb-0">Up to <span class="fw-semibold">50% OFF</span>, Hurry up before the stock ends</p>
-                              </div> --> */}
-                    <div className="modal-body">
+                    </Modal.Header>
+                    <Modal.Body className="modal-body">
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
                           <div className="col-12 col-lg-6 mb-3">
@@ -215,15 +225,15 @@ export default function NewEnquiries() {
                                 })}
                               />
                               <i className="ri-shield-user-line"></i>
-                              {
-                                <span className="error text-red-600">
-                                  {errors?.name?.type == "required" &&
-                                    "Name is required"}
-                                  {errors?.name?.type == "apierr" &&
-                                    errors?.name?.message}
-                                </span>
-                              }
                             </div>
+                            {
+                              <span className="error text-red-600">
+                                {errors?.name?.type == "required" &&
+                                  "Name is required"}
+                                {errors?.name?.type == "apierr" &&
+                                  errors?.name?.message}
+                              </span>
+                            }
                           </div>
                           <div className="col-12 col-lg-6 mb-3">
                             <label htmlFor="emailInput" className="form-label">
@@ -440,13 +450,9 @@ export default function NewEnquiries() {
                                        <label class="form-check-label" for="checkTerms">I agree to the <span class="fw-semibold">Terms of Service</span> and Privacy Policy</label>
                                        </div> --> */}
                           <div className="flex items-center justify-between">
-                            <div className="">
-                              <p className="text-danger text-center">
-                                {apiErr}
-                              </p>
-                              <p className="text-success text-center">
-                                {successMsg}
-                              </p>
+                            <div>
+                              <p className="text-success text-start">{successMsg}</p>
+                              <p className="text-danger text-start">{apiErr}</p>
                             </div>
                             <div className="text-end">
                               {!isLoading && (
@@ -483,12 +489,12 @@ export default function NewEnquiries() {
                           </div>
                         </div>
                       </form>
-                    </div>
+                    </Modal.Body>
                   </div>
                   {/* <!-- /.modal-content --> */}
                 </div>
                 {/* <!-- /.modal-dialog --> */}
-              </div>
+              </Modal>
               {/* <!-- /.modal --> */}
 
               {/* <!--end modal--> */}
