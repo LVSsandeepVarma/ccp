@@ -190,3 +190,7 @@ lord-icon {
   animation-name: pulse;
   animation-duration: 2s;
 }
+
+.auth-one-bg-space{
+  background: url("/assets/images/sesionExpired.jpg");
+}
