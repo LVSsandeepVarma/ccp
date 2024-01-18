@@ -1,15 +1,62 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { useGetCustomersQuery, useLazyCustomersPaginationQuery } from "../services/api"
+import { useGetCustomersQuery, useLazyCustomersPaginationQuery, useLazyCustomersSearchQuery } from "../services/api"
 import Loader from "./Loader"
+import { useDispatch, useSelector } from "react-redux";
+import { hideLoader, showLoader } from "../reducers/loader";
+import TableLoader from "./TableLoader";
+
+
 
 export default function CustomersTable() {
+    const dispatch = useDispatch();
+  const loaderState = useSelector((state) => state.loader?.value);
+  
   const [tableData, setTableData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+    const { data: customersData, isLoading, error } = useGetCustomersQuery();
+    console.log(customersData, error);
+  
+  const [customersSearch, { data, isLoading:searchLoading }] = useLazyCustomersSearchQuery();
+
+  useEffect(() => {
+    dispatch(showLoader());
+    const debounceTimer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm, "searchTerm");
+      console.log(searchTerm);
+      if (searchTerm != "") {
+        customersSearch(searchTerm).then((res) => {
+          console.log(res, "searchTerm");
+          setTableData(res?.data);
+        });
+      } else {
+        setTableData(customersData);
+      }
+      dispatch(hideLoader());
+    }, 1500);
+    // Clear the timeout on each key press to reset the timer
+    return () => {
+      clearTimeout(debounceTimer);
+    };
+  }, [searchTerm, customersData]);
+
+  useEffect(() => {
+    // Replace this with your actual search logic (e.g., API call)
+    console.log("Searching with debounced term:", debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
+
+  // Handler for input change
+  const handleInputChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
 
   
 
 
-  const { data: customersData, isLoading, error } = useGetCustomersQuery()
-  console.log(customersData, error)
+
 
     useEffect(() => {
       setTableData(customersData);
@@ -47,24 +94,260 @@ export default function CustomersTable() {
     });
   };
 
+    const handleTableSorting = (colType, fieldName) => {
+      console.log(tableData);
+      if (tableData?.data?.customers?.data) {
+        if (colType == "string") {
+          const sortedData = [...tableData.data.customers.data].sort((a, b) =>
+            a[fieldName].localeCompare(b[fieldName])
+          );
+
+          // Create a new object with the sorted data
+          const updatedTableData = {
+            ...tableData,
+            data: {
+              ...tableData.data,
+              customers: {
+                ...tableData.data.customers,
+                data: sortedData,
+              },
+            },
+          };
+
+          // Update the state with the new object
+          setTableData(updatedTableData);
+        } else if (colType == "number") {
+          const sortedData = [...tableData.data.customers.data].sort(
+            (a, b) => a[fieldName] - b[fieldName]
+          );
+
+          // Create a new object with the sorted data
+          const updatedTableData = {
+            ...tableData,
+            data: {
+              ...tableData.data,
+              customers: {
+                ...tableData.data.customers,
+                data: sortedData,
+              },
+            },
+          };
+
+          // Update the state with the new object
+          setTableData(updatedTableData);
+          console.log(sortedData, "sortedData");
+        } else if (colType == "date") {
+          const sortedData = [...tableData.data.customers.data].sort((a, b) => {
+            const dateA = new Date(a[fieldName]).getTime();
+            const dateB = new Date(b[fieldName]).getTime();
+
+            return dateA - dateB;
+          });
+
+          // Create a new object with the sorted data
+          const updatedTableData = {
+            ...tableData,
+            data: {
+              ...tableData.data,
+              customers: {
+                ...tableData.data.customers,
+                data: sortedData,
+              },
+            },
+          };
+
+          // Update the state with the new object
+          setTableData(updatedTableData);
+        }
+      }
+    };
+
+    const handleTableDescSorting = (colType, fieldName) => {
+      console.log(tableData);
+      if (tableData?.data?.customers?.data) {
+        if (colType == "string") {
+          const sortedData = [...tableData.data.customers.data].sort((a, b) =>
+            a[fieldName].localeCompare(b[fieldName])
+          );
+          sortedData.reverse();
+
+          // Create a new object with the sorted data
+          const updatedTableData = {
+            ...tableData,
+            data: {
+              ...tableData.data,
+              customers: {
+                ...tableData.data.customers,
+                data: sortedData,
+              },
+            },
+          };
+
+          // Update the state with the new object
+          setTableData(updatedTableData);
+        } else if (colType == "number") {
+          const sortedData = [...tableData.data.customers.data].sort(
+            (a, b) => b[fieldName] - a[fieldName]
+          );
+
+          // Create a new object with the sorted data
+          const updatedTableData = {
+            ...tableData,
+            data: {
+              ...tableData.data,
+              customers: {
+                ...tableData.data.customers,
+                data: sortedData,
+              },
+            },
+          };
+
+          // Update the state with the new object
+          setTableData(updatedTableData);
+          console.log(sortedData, "sortedData");
+        } else if (colType == "date") {
+          const sortedData = [...tableData.data.customers.data].sort((a, b) => {
+            const dateA = new Date(a[fieldName]).getTime();
+            const dateB = new Date(b[fieldName]).getTime();
+
+            return dateB - dateA;
+          });
+
+          // Create a new object with the sorted data
+          const updatedTableData = {
+            ...tableData,
+            data: {
+              ...tableData.data,
+              customers: {
+                ...tableData.data.customers,
+                data: sortedData,
+              },
+            },
+          };
+
+          // Update the state with the new object
+          setTableData(updatedTableData);
+        }
+      }
+    };
+
 
   return (
     <>
-      {isLoading && <Loader />}
+      {loading || (isLoading && <Loader />)}{" "}
+      <div className="text-end flex justify-end">
+        <label className="flex items-center gap-3">
+          Search:
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={handleInputChange}
+            className="form-control form-control-sm"
+            placeholder="Search Enquiries"
+            aria-controls="example"
+          />
+        </label>
+      </div>
       <table
         id="tbl_customers"
-        className="table table-borderedless dt-responsive nowrap table-striped align-middle w-full"
+        className={`table table-borderedless dt-responsive nowrap table-striped align-middle w-full ${
+          loaderState ? "relative" : ""
+        }`}
       >
         <thead>
           <tr className="bg-light">
-            <th>Customer No.</th>
-            <th>Customer/Company</th>
-            <th>Primary Contact</th>
-            <th>Primary Email</th>
-            <th>Phone</th>
+            <th>
+              Customer No.
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableSorting("number", "id")}
+              >
+                ↑
+              </span>
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableDescSorting("number", "id")}
+              >
+                ↓
+              </span>
+            </th>
+            <th>
+              Customer/Company
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableSorting("string", "company")}
+              >
+                ↑
+              </span>
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableDescSorting("number", "company")}
+              >
+                ↓
+              </span>
+            </th>
+            <th>
+              Primary Contact
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableSorting("string", "name")}
+              >
+                ↑
+              </span>
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableDescSorting("string", "name")}
+              >
+                ↓
+              </span>
+            </th>
+            <th>
+              Primary Email
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableSorting("string", "email")}
+              >
+                ↑
+              </span>
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableDescSorting("string", "email")}
+              >
+                ↓
+              </span>
+            </th>
+            <th>
+              Phone
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableSorting("number", "phone")}
+              >
+                ↑
+              </span>
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableDescSorting("number", "phone")}
+              >
+                ↓
+              </span>
+            </th>
             <th>Active</th>
             <th>Groups</th>
-            <th>Created Date</th>
+            <th>
+              Created Date
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableSorting("number", "created_at")}
+              >
+                ↑
+              </span>
+              <span
+                className="cursor-pointer"
+                onClick={() => handleTableDescSorting("number", "created_at")}
+              >
+                ↓
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -72,7 +355,13 @@ export default function CustomersTable() {
             <tr key={ind}>
               <td className="text-start">{customer?.id}</td>
               <td className="text-primary text-start">
-                <a onClick={()=>{window.location.href = `/edit-customer/${customer?.id}`;}}>{customer?.company}</a>
+                <a
+                  onClick={() => {
+                    window.location.href = `/edit-customer/${customer?.id}`;
+                  }}
+                >
+                  {customer?.company}
+                </a>
               </td>
               <td className="text-start">{customer?.primary_contact?.name}</td>
               <td>
@@ -86,7 +375,7 @@ export default function CustomersTable() {
                   <input
                     className="form-check-input code-switcher"
                     type="checkbox"
-                    checked={customer?.status}
+                    checked={customer?.status == 0 ? false: true}
                   />
                 </div>
               </td>
@@ -105,7 +394,15 @@ export default function CustomersTable() {
               </td>
             </tr>
           ))}
+          {tableData?.data?.customers?.data?.length == 0 && (
+            <tr>
+              <td colSpan={8}>
+                <p className="text-center w-full text-lg">No data found</p>
+              </td>
+            </tr>
+          )}
         </tbody>
+        {loaderState && <TableLoader />}
       </table>
       <div className="flex justify-between">
         <div className="">

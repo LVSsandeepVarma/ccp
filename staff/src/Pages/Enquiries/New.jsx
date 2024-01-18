@@ -8,7 +8,9 @@ import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useAddEnquiryMutation, useEnquiriesQuery } from "../../services/api";
 import Loader from "../Loader";
-import {Modal} from "react-bootstrap"
+import { Modal } from "react-bootstrap"
+import axios from "axios";
+
 // import EditEnquiry from "./EditEnquiryForm";
 
 
@@ -27,10 +29,15 @@ export default function NewEnquiries() {
       register,
       handleSubmit,
       setError,
+      setValue,
+      watch,
       formState: { errors },
     } = useForm({
       mode: "all",
     });
+  
+      const zipcode = watch("zip");
+
   
   useEffect(() => {
     if (apiErr) {
@@ -42,7 +49,7 @@ export default function NewEnquiries() {
     if (successMsg) {
       setTimeout(() => {
         setSuccessMsg("")
-        addEnq.current.click();
+        // addEnq.current.click();
         localStorage.removeItem("editEnq");
       },2000)
     }
@@ -120,6 +127,37 @@ export default function NewEnquiries() {
 
 
   }
+
+      const fetchCSC = async (value) => {
+        try {
+          const response = await axios.post(
+            "https://controller.callcentreproject.com/bdo-api/get-postal-code",
+            { zip: value },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem(
+                  "staff_auth_token"
+                )}`,
+              },
+            }
+          );
+          console.log(response?.data);
+          if (response) {
+            setValue("city", response?.data?.data?.postal_data?.taluq);
+            setValue("state", response?.data?.data?.postal_data?.state);
+            // setValue("country", response?.data?.data?.postal_data?.country);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      useEffect(() => {
+        if (zipcode?.length == 6) {
+          console.log(zipcode, "billingzip");
+          fetchCSC(zipcode, "billing");
+        }
+      }, [zipcode]);
   
 
     return (
@@ -169,7 +207,6 @@ export default function NewEnquiries() {
                     <a
                       id="addEnquiry"
                       ref={addEnq}
-                      
                       className="btn btn-primary bg-primary"
                       onClick={handleShow}
                     >
@@ -197,8 +234,10 @@ export default function NewEnquiries() {
               >
                 <div className="modal-dialog modal-dialog-centered modal-lg !m-0">
                   <div className="modal-content border-0 overflow-hidden">
-                    <Modal.Header className="modal-header p-3" >
-                      <h4 className="card-title mb-0 font-bold">Add New Enquiry</h4>
+                    <Modal.Header className="modal-header p-3">
+                      <h4 className="card-title mb-0 font-bold">
+                        Add New Enquiry
+                      </h4>
                       <button
                         className="btn-close"
                         data-bs-dismiss="modal"
@@ -254,17 +293,17 @@ export default function NewEnquiries() {
                               />
 
                               <i className="ri-mail-unread-line"></i>
-                              {
-                                <span className="error text-red-600">
-                                  {errors?.email?.type == "required" &&
-                                    "Email is required"}
-                                  {errors?.email?.type == "pattern" &&
-                                    "Invalid email"}
-                                  {errors?.email?.type == "apierr" &&
-                                    errors?.email?.message}
-                                </span>
-                              }
                             </div>
+                            {
+                              <span className="error text-red-600">
+                                {errors?.email?.type == "required" &&
+                                  "Email is required"}
+                                {errors?.email?.type == "pattern" &&
+                                  "Invalid email"}
+                                {errors?.email?.type == "apierr" &&
+                                  errors?.email?.message}
+                              </span>
+                            }
                           </div>
                           <div className="col-12 col-lg-6 mb-3">
                             <label htmlFor="mobileInput" className="form-label">
@@ -286,28 +325,28 @@ export default function NewEnquiries() {
                                 })}
                               />
                               <i className=" ri-smartphone-line"></i>
-                              {
-                                <span className="error text-red-600">
-                                  {errors?.phone?.type == "required" &&
-                                    "Mobile number is required"}
-                                  {errors?.phone?.type == "pattern" &&
-                                    "Invalid Mobile number"}
-                                  {errors?.phone?.type == "maxLength" &&
-                                    "Invalid Mobile number"}
-                                  {errors?.phone?.type == "minLength" &&
-                                    "Invalid Mobile number"}
-                                  {errors?.phone?.type == "apierr" &&
-                                    errors?.phone?.message}
-                                </span>
-                              }
                             </div>
+                            {
+                              <span className="error text-red-600">
+                                {errors?.phone?.type == "required" &&
+                                  "Mobile number is required"}
+                                {errors?.phone?.type == "pattern" &&
+                                  "Invalid Mobile number"}
+                                {errors?.phone?.type == "maxLength" &&
+                                  "Invalid Mobile number"}
+                                {errors?.phone?.type == "minLength" &&
+                                  "Invalid Mobile number"}
+                                {errors?.phone?.type == "apierr" &&
+                                  errors?.phone?.message}
+                              </span>
+                            }
                           </div>
                           <div className="col-12 col-lg-6 mb-3">
                             <label
                               htmlFor="addressInput"
                               className="form-label"
                             >
-                              Address <span className="text-danger">*</span>{" "}
+                              Address{" "}
                             </label>
                             <div className="form-icon right">
                               <input
@@ -316,26 +355,25 @@ export default function NewEnquiries() {
                                 id="addressInput"
                                 placeholder="Enter Address"
                                 {...register("address", {
-                                  required: true,
                                   message: "Address is required",
                                   maxLength: 250,
-                                  minLength: 25,
+                                  minLength: 15,
                                 })}
                               />
                               <i className="ri-map-pin-line"></i>
-                              {
-                                <span className="error text-red-600">
-                                  {errors?.address?.type == "required" &&
-                                    "Address is required"}
-                                  {errors?.address?.type == "maxLength" &&
-                                    "Max 250 characters are allowed"}
-                                  {errors?.address?.type == "minLength" &&
-                                    "Min 25 characters are required"}
-                                  {errors?.address?.type == "apierr" &&
-                                    errors?.address?.message}
-                                </span>
-                              }
                             </div>
+                            {
+                              <span className="error text-red-600">
+                                {errors?.address?.type == "required" &&
+                                  "Address is required"}
+                                {errors?.address?.type == "maxLength" &&
+                                  "Max 250 characters are allowed"}
+                                {errors?.address?.type == "minLength" &&
+                                  "Min 25 characters are required"}
+                                {errors?.address?.type == "apierr" &&
+                                  errors?.address?.message}
+                              </span>
+                            }
                           </div>
                           <div className="col-12 col-lg-4 mb-3">
                             <label htmlFor="pinInput" className="form-label">
@@ -353,15 +391,15 @@ export default function NewEnquiries() {
                                 })}
                               />
                               <i className="ri-map-pin-fill"></i>
-                              {
-                                <span className="error text-red-600">
-                                  {errors?.zip?.type == "required" &&
-                                    "Zip code is required"}
-                                  {errors?.zip?.type == "apierr" &&
-                                    errors?.zip?.message}
-                                </span>
-                              }
                             </div>
+                            {
+                              <span className="error text-red-600">
+                                {errors?.zip?.type == "required" &&
+                                  "Zip code is required"}
+                                {errors?.zip?.type == "apierr" &&
+                                  errors?.zip?.message}
+                              </span>
+                            }
                           </div>
                           <div className="col-12 col-lg-4 mb-3">
                             <label
@@ -381,15 +419,15 @@ export default function NewEnquiries() {
                                   message: "State is required",
                                 })}
                               />
-                              {
-                                <span className="error text-red-600">
-                                  {errors?.state?.type == "required" &&
-                                    "State is required"}
-                                  {errors?.state?.type == "apierr" &&
-                                    errors?.state?.message}
-                                </span>
-                              }
                             </div>
+                            {
+                              <span className="error text-red-600">
+                                {errors?.state?.type == "required" &&
+                                  "State is required"}
+                                {errors?.state?.type == "apierr" &&
+                                  errors?.state?.message}
+                              </span>
+                            }
                           </div>
                           <div className="col-12 col-lg-4 mb-3">
                             <label htmlFor="cityInput" className="form-label">
@@ -400,21 +438,21 @@ export default function NewEnquiries() {
                                 type="text"
                                 className="form-control"
                                 id="cityInput"
-                                placeholder="Enter State"
+                                placeholder="Enter City"
                                 {...register("city", {
                                   required: true,
                                   message: "City is required",
                                 })}
                               />
-                              {
-                                <span className="error text-red-600">
-                                  {errors?.city?.type == "required" &&
-                                    "City is required"}
-                                  {errors?.city?.type == "apierr" &&
-                                    errors?.city?.message}
-                                </span>
-                              }
                             </div>
+                            {
+                              <span className="error text-red-600">
+                                {errors?.city?.type == "required" &&
+                                  "City is required"}
+                                {errors?.city?.type == "apierr" &&
+                                  errors?.city?.message}
+                              </span>
+                            }
                           </div>
 
                           <div className="col-12 col-lg-12 mb-3">
@@ -422,28 +460,27 @@ export default function NewEnquiries() {
                               htmlFor="messageInput"
                               className="form-label"
                             >
-                              Message <span className="text-danger">*</span>{" "}
+                              Message
                             </label>
                             {/* <!-- <input type="text" class="form-control" id="messageInput" placeholder="Enter Postal Code"> --> */}
                             <textarea
                               name="name"
                               className="form-control"
                               id="messageInput"
-                              placeholder="Enter Postal Code"
+                              placeholder="Enter Message"
                               {...register("message", {
-                                required: true,
                                 message: "Message is required",
                               })}
                             ></textarea>
-                            {
-                              <span className="error text-red-600">
-                                {errors?.message?.type == "required" &&
-                                  "Message is required"}
-                                {errors?.message?.type == "apierr" &&
-                                  errors?.message?.message}
-                              </span>
-                            }
                           </div>
+                          {
+                            <span className="error text-red-600">
+                              {errors?.message?.type == "required" &&
+                                "Message is required"}
+                              {errors?.message?.type == "apierr" &&
+                                errors?.message?.message}
+                            </span>
+                          }
 
                           {/* <!-- <div class="col-12 col-lg-6 mb-3 form-check">
                                        <input type="checkbox" class="form-check-input" id="checkTerms">
@@ -451,7 +488,9 @@ export default function NewEnquiries() {
                                        </div> --> */}
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-success text-start">{successMsg}</p>
+                              <p className="text-success text-start">
+                                {successMsg}
+                              </p>
                               <p className="text-danger text-start">{apiErr}</p>
                             </div>
                             <div className="text-end">

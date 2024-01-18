@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useCurrencyQuery, useUpdateProfileMutation } from "../../services/api";
 import Loader from "../Loader";
+import axios from "axios"
 
 
 export default function ProfileForm({userInfo}) {
@@ -18,11 +19,14 @@ export default function ProfileForm({userInfo}) {
     setError,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: customerInfo,
     mode: "all",
   });
+
+    const zipcode = watch("zip");
 
 
 
@@ -141,6 +145,45 @@ export default function ProfileForm({userInfo}) {
     }
   };
   console.log(errors);
+
+    const fetchCSC = async (value) => {
+      try {
+        const response = await axios.post(
+          "https://controller.callcentreproject.com/bdo-api/get-postal-code",
+          { zip: value },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem(
+                "staff_auth_token"
+              )}`,
+            },
+          }
+        );
+        console.log(response?.data);
+        if (response) {
+         
+            setValue("city", response?.data?.data?.postal_data?.taluq);
+            setValue(
+              "state",
+              response?.data?.data?.postal_data?.state
+            );
+            setValue(
+              "country",
+              response?.data?.data?.postal_data?.country
+            );
+          
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    useEffect(() => {
+      if (zipcode?.length == 6) {
+        console.log(zipcode, "billingzip");
+        fetchCSC(zipcode, "billing");
+      }
+    }, [zipcode]);
 
   return (
     <>
@@ -364,16 +407,16 @@ export default function ProfileForm({userInfo}) {
               placeholder="Select Currency"
               options={currencyOptions}
               defaultValue={{ label: "INR (₹)", value: 1 }}
-              {...register("currency", {
+              {...register("note", {
                 required: true,
-                message: "Currency is required",
+                message: "Note is required",
               })}
             />
             {
               <span className="error text-red-600">
-                {errors?.currency?.type == "required" && "Currency is required"}
-                {errors?.currency?.type == "apierr" &&
-                  errors?.currency?.message}
+                {errors?.note?.type == "required" && "Note is required"}
+                {errors?.note?.type == "apierr" &&
+                  errors?.note?.message}
               </span>
             }
           </div>

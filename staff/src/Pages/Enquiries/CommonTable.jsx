@@ -6,25 +6,72 @@ import { useEffect, useState } from "react";
 import Comments from "./Comments";
 import {
   useLazyEnquiriesPaginationQuery,
+  useLazyEnquirySearchQuery,
 } from "../../services/api";
 import CreateCustomer from "./CreateCustomer";
 import Modal from "react-bootstrap/Modal";
+import Loader from "../Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { hideLoader, showLoader } from "../../reducers/loader";
+import TableLoader from "../TableLoader";
 
 
 
 
 const CommonTable = ({ enquiriesData, type, enquirySelect }) => {
+    const dispatch = useDispatch();
+    const loaderState = useSelector((state) => state.loader?.value);
 const [tableData, setTableData] = useState([]);
   const [editEnq, setEditEnq] = useState({});
   const [cusData, setCusData] = useState({})
   const [showCommentsModal, setShowCommentsModal] = useState(false)
-    const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+    const [enquiriesSearch, { data, isLoading }] = useLazyEnquirySearchQuery();
+
+    useEffect(() => {
+      dispatch(showLoader());
+      const debounceTimer = setTimeout(() => {
+        setDebouncedSearchTerm(searchTerm, "searchTerm");
+        console.log(searchTerm);
+        if (searchTerm != "") {
+          enquiriesSearch({
+            searchkey: searchTerm,
+            type: type?.toUpperCase(),
+          }).then((res) => {
+            console.log(res, "searchTerm");
+            setTableData(res?.data);
+          });
+        } else {
+          setTableData(enquiriesData);
+        }
+        dispatch(hideLoader());
+      }, 1500);
+      // Clear the timeout on each key press to reset the timer
+      return () => {
+        clearTimeout(debounceTimer);
+      };
+    }, [searchTerm, enquiriesData]);
+
+    useEffect(() => {
+      // Replace this with your actual search logic (e.g., API call)
+      console.log("Searching with debounced term:", debouncedSearchTerm);
+    }, [debouncedSearchTerm]);
+
+    // Handler for input change
+    const handleInputChange = (event) => {
+      setSearchTerm(event.target.value);
+    };
 
     const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   
       const handleCommentsClose = () => setShowCommentsModal(false);
-      const handleCommentsShow = () => setShowCommentsModal(true);
+  const handleCommentsShow = () => setShowCommentsModal(true);
+  
+
 useEffect(() => {
   setTableData(enquiriesData);
 }, [enquiriesData]);
@@ -83,10 +130,160 @@ const handleCustomPage = (pageNO) => {
     setCusData(row);
     handleShow()
   }
+  const handleTableSorting = (colType, fieldName) => {
+    console.log(tableData);
+    if (tableData?.data?.enquiries?.data) { 
+    if (colType == "string") {
+      const sortedData = [...tableData.data.enquiries.data].sort((a, b) =>
+        a[fieldName].localeCompare(b[fieldName])
+      );
+
+      // Create a new object with the sorted data
+      const updatedTableData = {
+        ...tableData,
+        data: {
+          ...tableData.data,
+          enquiries: {
+            ...tableData.data.enquiries,
+            data: sortedData,
+          },
+        },
+      };
+
+      // Update the state with the new object
+      setTableData(updatedTableData);
+    } else if (colType == "number") {
+      const sortedData = [...tableData.data.enquiries.data].sort(
+        (a, b) => a[fieldName] - b[fieldName]
+      );
+
+      // Create a new object with the sorted data
+      const updatedTableData = {
+        ...tableData,
+        data: {
+          ...tableData.data,
+          enquiries: {
+            ...tableData.data.enquiries,
+            data: sortedData,
+          },
+        },
+      };
+
+      // Update the state with the new object
+      setTableData(updatedTableData);
+      console.log(sortedData, "sortedData");
+    } else if (colType == "date") {
+       const sortedData = [...tableData.data.enquiries.data].sort((a, b) => {
+         const dateA = new Date(a[fieldName]).getTime();
+         const dateB = new Date(b[fieldName]).getTime();
+
+         return dateA - dateB;
+       });
+
+      // Create a new object with the sorted data
+      const updatedTableData = {
+        ...tableData,
+        data: {
+          ...tableData.data,
+          enquiries: {
+            ...tableData.data.enquiries,
+            data: sortedData,
+          },
+        },
+      };
+
+      // Update the state with the new object
+      setTableData(updatedTableData);
+    }
+  }
+  }
+
+    const handleTableDescSorting = (colType, fieldName) => {
+      console.log(tableData);
+      if (tableData?.data?.enquiries?.data) {
+        if (colType == "string") {
+          const sortedData = [...tableData.data.enquiries.data].sort((a, b) =>
+            a[fieldName].localeCompare(b[fieldName])
+          );
+          sortedData.reverse();
+
+          // Create a new object with the sorted data
+          const updatedTableData = {
+            ...tableData,
+            data: {
+              ...tableData.data,
+              enquiries: {
+                ...tableData.data.enquiries,
+                data: sortedData,
+              },
+            },
+          };
+
+          // Update the state with the new object
+          setTableData(updatedTableData);
+        } else if (colType == "number") {
+          const sortedData = [...tableData.data.enquiries.data].sort(
+            (a, b) => b[fieldName] - a[fieldName]
+          );
+
+          // Create a new object with the sorted data
+          const updatedTableData = {
+            ...tableData,
+            data: {
+              ...tableData.data,
+              enquiries: {
+                ...tableData.data.enquiries,
+                data: sortedData,
+              },
+            },
+          };
+
+          // Update the state with the new object
+          setTableData(updatedTableData);
+          console.log(sortedData, "sortedData");
+        } else if (colType == "date") {
+          const sortedData = [...tableData.data.enquiries.data].sort((a, b) => {
+            const dateA = new Date(a[fieldName]).getTime();
+            const dateB = new Date(b[fieldName]).getTime();
+
+            return dateB - dateA;
+          });
+
+          // Create a new object with the sorted data
+          const updatedTableData = {
+            ...tableData,
+            data: {
+              ...tableData.data,
+              enquiries: {
+                ...tableData.data.enquiries,
+                data: sortedData,
+              },
+            },
+          };
+
+          // Update the state with the new object
+          setTableData(updatedTableData);
+        }
+      }
+    };
 
   // Render the table
   return (
     <>
+      {loading || (isLoading && <Loader />)}
+      <div className="text-end flex justify-end mx-3">
+        <label className="flex items-center gap-3">
+          Search:
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={handleInputChange}
+            className="form-control form-control-sm"
+            placeholder="Search Enquiries"
+            aria-controls="example"
+          />
+        </label>
+      </div>
       <div className="">
         <table className="table responsive w-100" id="example">
           <thead className="table-light text-muted">
@@ -101,13 +298,111 @@ const handleCustomPage = (pageNO) => {
                   />
                 </div>
               </th> */}
-              <th>Sl No.</th>
-              <th>Name</th>
-              <th>Phone</th>
-              <th>Ringing Date</th>
-              <th>Message</th>
-              <th>Comment</th>
-              <th>Status</th>
+              <th>
+                Sl No.{" "}
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableSorting("number", "id")}
+                >
+                  ↑
+                </span>
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableDescSorting("number", "id")}
+                >
+                  ↓
+                </span>
+              </th>
+              <th>
+                Name{" "}
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableSorting("string", "name")}
+                >
+                  ↑
+                </span>
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableDescSorting("string", "name")}
+                >
+                  ↓
+                </span>
+              </th>
+              <th>
+                Phone{" "}
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableSorting("number", "phone")}
+                >
+                  ↑
+                </span>
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableDescSorting("number", "phone")}
+                >
+                  ↓
+                </span>
+              </th>
+              <th>
+                Ringing Date{" "}
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableSorting("date", "created_at")}
+                >
+                  ↑
+                </span>
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableDescSorting("date", "created_at")}
+                >
+                  ↓
+                </span>
+              </th>
+              <th>
+                Message{" "}
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableSorting("string", "message")}
+                >
+                  ↑
+                </span>
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableDescSorting("string", "message")}
+                >
+                  ↓
+                </span>
+              </th>
+              <th>
+                Comment{" "}
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableSorting("string", "comment")}
+                >
+                  ↑
+                </span>
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableDescSorting("string", "message")}
+                >
+                  ↓
+                </span>
+              </th>
+              <th>
+                Status{" "}
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableSorting("string", "status")}
+                >
+                  ↑
+                </span>
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleTableDescSorting("string", "message")}
+                >
+                  ↓
+                </span>
+              </th>
               <th>Action</th>
             </tr>
           </thead>
@@ -197,7 +492,15 @@ const handleCustomPage = (pageNO) => {
                   </td>
                 </tr>
               ))}
+            {tableData?.data?.enquiries?.data?.length == 0 && (
+              <tr>
+                <td colSpan={8}>
+                  <p className="text-center w-full text-lg">No data found</p>
+                </td>
+              </tr>
+            )}
           </tbody>
+          {loaderState && <TableLoader />}
         </table>
       </div>
       <div className="flex justify-between">

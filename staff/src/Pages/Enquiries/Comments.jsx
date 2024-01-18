@@ -9,6 +9,7 @@ import {
   useCommentEnquiryMutation,
   useCommentLogsQuery,
 } from "../../services/api";
+import axios from "axios"
 
 // eslint-disable-next-line no-unused-vars
 export default function Comments({type, logData, onHide}) {
@@ -21,6 +22,8 @@ export default function Comments({type, logData, onHide}) {
       register,
       handleSubmit,
       setError,
+      watch,
+      setValue,
       formState: { errors },
     } = useForm({
       defaultValues: {
@@ -38,7 +41,7 @@ export default function Comments({type, logData, onHide}) {
       },
       mode: "all",
     });
-  
+      const zipcode = watch("zip");
 
   
     const { data: commentsLogs, isLoading: loading, error: logError } = useCommentLogsQuery({id:logData?.id, position: type?.toUpperCase()});
@@ -134,7 +137,42 @@ export default function Comments({type, logData, onHide}) {
         console.log(err, "err");
       }
     };
-    console.log(errors);
+  console.log(errors);
+  
+      const fetchCSC = async (value) => {
+        try {
+          const response = await axios.post(
+            "https://controller.callcentreproject.com/bdo-api/get-postal-code",
+            { zip: value },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem(
+                  "staff_auth_token"
+                )}`,
+              },
+            }
+          );
+          console.log(response?.data);
+          if (response) {
+            setValue("city", response?.data?.data?.postal_data?.taluq);
+            setValue("state", response?.data?.data?.postal_data?.state);
+            setValue("country", response?.data?.data?.postal_data?.country);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      // const handleBillingBlur =  () => {
+      //   // Check if there are no validation errors
+
+      // };
+      useEffect(() => {
+        if (zipcode?.length == 6) {
+          console.log(zipcode, "billingzip");
+          fetchCSC(zipcode, "billing");
+        }
+      }, [zipcode]);
 
   return (
     <>

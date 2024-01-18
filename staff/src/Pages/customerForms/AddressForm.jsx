@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
-import Select from "react-select";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import {  useUpdateProfileMutation } from "../../services/api";
+import {  useUpdateProfileAddressMutation } from "../../services/api";
 import Loader from "../Loader";
+import axios from  "axios"
 
 export default function AddressForm({ userInfo }) {
   const [apiErr, setApiErr] = useState("");
@@ -17,14 +17,20 @@ export default function AddressForm({ userInfo }) {
     setError,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: customerInfo,
     mode: "all",
   });
 
-  const [updateProfile, { isLoading, error }] = useUpdateProfileMutation();
+  const billingZip = watch("billing_zip");
+  const shippingZip = watch("shipping_zip");
+
+  const [updateProfile, { isLoading, error }] = useUpdateProfileAddressMutation();
   console.log(error);
+
+
 
 
 
@@ -137,240 +143,318 @@ export default function AddressForm({ userInfo }) {
   };
   console.log(errors);
 
+
+  const fetchCSC = async (value, fieldName) => {
+    try { 
+      const response = await axios.post(
+        "https://controller.callcentreproject.com/bdo-api/get-postal-code", { zip: value }, {
+          headers: {
+          Authorization: `Bearer ${localStorage.getItem('staff_auth_token')}`,
+        }}
+      );
+      console.log(response?.data);
+      if (response) {
+        
+        if (fieldName == "shipping") {
+          setValue("shipping_city", response?.data?.data?.postal_data?.taluq)
+          setValue("shipping_state", response?.data?.data?.postal_data?.state);
+          setValue("shipping_country", response?.data?.data?.postal_data?.country);
+        } else {
+          setValue("billing_city", response?.data?.data?.postal_data?.taluq);
+          setValue("billing_state", response?.data?.data?.postal_data?.state);
+          setValue(
+            "billing_country",
+            response?.data?.data?.postal_data?.country
+          );
+        }
+      }
+    }
+    catch (err) {
+      console.log(err)
+    }
+  }
+
+  // const handleBillingBlur =  () => {
+  //   // Check if there are no validation errors
+    
+  // };
+  useEffect(() => {
+    console.log(billingZip, errors.billing_zip, "billingZip");
+    if (billingZip?.length == 6) {
+    console.log(billingZip, "billingzip");
+    fetchCSC(billingZip, "billing");
+    }
+  }, [billingZip])
+  
+    useEffect(() => {
+      if (shippingZip?.length == 6) {
+        console.log(shippingZip, "shippingzip");
+        fetchCSC(shippingZip, "shipping");
+      }
+    }, [shippingZip]);
+
+
   return (
     <>
       {isLoading && <Loader />}
       <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="row">
-        <div className="col-lg-6">
-          <div className="d-flex align-items-center justify-content-between border-bottom pb-2">
-            <h4 className="mb-0 text-2xl font-bold">Billing Address</h4>
-            <span className="text-muted cursor-pointer">
-              Same as Customer Info
-            </span>
-          </div>
-          <div className="mt-3">
-            <label htmlFor="placeholderInput" className="form-label">
-              Street
-            </label>
-            <textarea
-              name="b_address"
-              rows="2"
-              className="form-control"
-              placeholder="Billing Address"
-              {...register("b_address", {
-                required: true,
-                message: "Billing Address is required",
-              })}
-            ></textarea>
-            {
-              <span className="error text-red-600">
-                {errors?.b_address?.type == "required" && "Billing address is required"}
-                {errors?.b_address?.type == "apierr" && errors?.b_address?.message}
+        <div className="row">
+          <div className="col-lg-6">
+            <div className="d-flex align-items-center justify-content-between border-bottom pb-2">
+              <h4 className="mb-0 text-2xl font-bold">Billing Address</h4>
+              <span className="text-muted cursor-pointer">
+                Same as Customer Info
               </span>
-            }
-          </div>
-          <div className="mt-3">
-            <label htmlFor="placeholderInput" className="form-label">
-              Zip Code
-            </label>
-            <input
+            </div>
+            <div className="mt-3">
+              <label htmlFor="placeholderInput" className="form-label">
+                Street
+              </label>
+              <textarea
+                name="billing_address"
+                rows="2"
+                className="form-control"
+                placeholder="Billing Address"
+                {...register("billing_address", {
+                  required: true,
+                  message: "Billing Address is required",
+                })}
+              ></textarea>
+              {
+                <span className="error text-red-600">
+                  {errors?.billing_address?.type == "required" &&
+                    "Billing address is required"}
+                  {errors?.billing_address?.type == "apierr" &&
+                    errors?.billing_address?.message}
+                </span>
+              }
+            </div>
+            <div className="mt-3">
+              <label htmlFor="placeholderInput" className="form-label">
+                Zip Code
+              </label>
+              <input
                 type="number"
                 className="form-control"
                 id="pinInput"
                 placeholder="Enter Postal Code"
-                {...register("b_zip", {
+                {...register("billing_zip", {
                   required: true,
+                  minLength: 6,
+                  maxLength: 6,
                   message: "Billing Zip code is required",
                 })}
               />
               {
                 <span className="error text-red-600">
-                  {errors?.b_zip?.type == "required" && "Zip code is required"}
-                  {errors?.b_zip?.type == "apierr" && errors?.b_zip?.message}
+                  {errors?.billing_zip?.type == "required" &&
+                    "Zip code is required"}
+                  {(errors?.billing_zip?.type == "minLength" ||
+                    errors?.billing_zip?.type == "maxLength") &&
+                    "Zip code is Invalid"}
+                  {errors?.billing_zip?.type == "apierr" &&
+                    errors?.billing_zip?.message}
                 </span>
               }
-          </div>
-          <div className="mt-3">
-            <label htmlFor="placeholderInput" className="form-label">
-              City
-            </label>
-            <input
+            </div>
+            <div className="mt-3">
+              <label htmlFor="placeholderInput" className="form-label">
+                City
+              </label>
+              <input
                 type="text"
                 className="form-control"
                 id="cityInput"
                 placeholder="Enter City"
-                {...register("b_city", {
+                {...register("billing_city", {
                   required: true,
                   message: "Billing City is required",
                 })}
               />
               {
                 <span className="error text-red-600">
-                  {errors?.b_city?.type == "required" && "City is required"}
-                  {errors?.b_city?.type == "apierr" && errors?.b_city?.message}
+                  {errors?.billing_city?.type == "required" &&
+                    "City is required"}
+                  {errors?.billing_city?.type == "apierr" &&
+                    errors?.billing_city?.message}
                 </span>
               }
-          </div>
-          <div className="mt-3">
-            <label htmlFor="placeholderInput" className="form-label">
-              State
-            </label>
-            <input
+            </div>
+            <div className="mt-3">
+              <label htmlFor="placeholderInput" className="form-label">
+                State
+              </label>
+              <input
                 type="text"
                 className="form-control"
                 id="stateInput"
                 placeholder="Enter State"
-                {...register("b_state", {
+                {...register("billing_state", {
                   required: true,
                   message: "Billing state is required",
                 })}
               />
               {
                 <span className="error text-red-600">
-                  {errors?.b_state?.type == "required" && "State is required"}
-                  {errors?.b_state?.type == "apierr" && errors?.b_state?.message}
+                  {errors?.billing_state?.type == "required" &&
+                    "State is required"}
+                  {errors?.billing_state?.type == "apierr" &&
+                    errors?.billing_state?.message}
                 </span>
               }
-          </div>
-          <div className="mt-3">
-            <label htmlFor="placeholderInput" className="form-label">
-              Country
-            </label>
-            <input
+            </div>
+            <div className="mt-3">
+              <label htmlFor="placeholderInput" className="form-label">
+                Country
+              </label>
+              <input
                 type="text"
                 className="form-control"
                 id="countryInput"
                 placeholder="Enter Country"
-                {...register("b_country", {
+                {...register("billing_country", {
                   required: true,
                   message: "Billing Country is required",
                 })}
               />
               {
                 <span className="error text-red-600">
-                  {errors?.b_country?.type == "required" && "Country is required"}
-                  {errors?.b_country?.type == "apierr" &&
-                    errors?.b_country?.message}
+                  {errors?.billing_country?.type == "required" &&
+                    "Country is required"}
+                  {errors?.billing_country?.type == "apierr" &&
+                    errors?.billing_country?.message}
                 </span>
               }
+            </div>
           </div>
-          
-        </div>
-        <div className="col-lg-6">
-          <div className="d-flex align-items-center justify-content-between border-bottom pb-2">
-            <h4 className="mb-0 text-2xl font-bold">Shipping Address</h4>
-            <span className="text-muted cursor-pointer">
-              Copy Billing Address
-            </span>
-          </div>
-          <div className="mt-3">
-            <label htmlFor="placeholderInput" className="form-label">
-              Street
-            </label>
-            <textarea
-              name="s_address"
-              rows="2"
-              className="form-control"
-              placeholder="Shipping Address"
-              {...register("s_address", {
-                required: true,
-                message: "Shipping Address is required",
-              })}
-            ></textarea>
-            {
-              <span className="error text-red-600">
-                {errors?.s_address?.type == "required" && "Shipping address is required"}
-                {errors?.s_address?.type == "apierr" && errors?.s_address?.message}
+          <div className="col-lg-6">
+            <div className="d-flex align-items-center justify-content-between border-bottom pb-2">
+              <h4 className="mb-0 text-2xl font-bold">Shipping Address</h4>
+              <span className="text-muted cursor-pointer">
+                Copy Billing Address
               </span>
-            }
-          </div>
-          <div className="mt-3">
-            <label htmlFor="placeholderInput" className="form-label">
-              Zip Code
-            </label>
-            <input
+            </div>
+            <div className="mt-3">
+              <label htmlFor="placeholderInput" className="form-label">
+                Street
+              </label>
+              <textarea
+                name="shipping_address"
+                rows="2"
+                className="form-control"
+                placeholder="Shipping Address"
+                {...register("shipping_address", {
+                  required: true,
+                  message: "Shipping Address is required",
+                })}
+              ></textarea>
+              {
+                <span className="error text-red-600">
+                  {errors?.shipping_address?.type == "required" &&
+                    "Shipping address is required"}
+                  {errors?.shipping_address?.type == "apierr" &&
+                    errors?.shipping_address?.message}
+                </span>
+              }
+            </div>
+            <div className="mt-3">
+              <label htmlFor="placeholderInput" className="form-label">
+                Zip Code
+              </label>
+              <input
                 type="number"
                 className="form-control"
                 id="pinInput"
                 placeholder="Enter Postal Code"
-                {...register("s_zip", {
+                {...register("shipping_zip", {
                   required: true,
                   message: "Shipping Zip code is required",
+                  minLength: 6,
+                  maxLength:6
                 })}
               />
               {
                 <span className="error text-red-600">
-                  {errors?.s_zip?.type == "required" && "Zip code is required"}
-                  {errors?.s_zip?.type == "apierr" && errors?.s_zip?.message}
+                  {errors?.shipping_zip?.type == "required" &&
+                    "Zip code is required"}
+                  {(errors?.shipping_zip?.type == "minLength" ||
+                    errors?.shipping_zip?.type == "maxLength") &&
+                    "Zip code is Invalid"}
+                  {errors?.shipping_zip?.type == "apierr" &&
+                    errors?.shipping_zip?.message}
                 </span>
               }
-          </div>
-          <div className="mt-3">
-            <label htmlFor="placeholderInput" className="form-label">
-              City
-            </label>
-            <input
+            </div>
+            <div className="mt-3">
+              <label htmlFor="placeholderInput" className="form-label">
+                City
+              </label>
+              <input
                 type="text"
                 className="form-control"
                 id="cityInput"
                 placeholder="Enter City"
-                {...register("s_city", {
+                {...register("shipping_city", {
                   required: true,
                   message: "Shipping City is required",
                 })}
               />
               {
                 <span className="error text-red-600">
-                  {errors?.s_city?.type == "required" && "City is required"}
-                  {errors?.s_city?.type == "apierr" && errors?.s_city?.message}
+                  {errors?.shipping_city?.type == "required" &&
+                    "City is required"}
+                  {errors?.shipping_city?.type == "apierr" &&
+                    errors?.shipping_city?.message}
                 </span>
               }
-          </div>
-          <div className="mt-3">
-            <label htmlFor="placeholderInput" className="form-label">
-              State
-            </label>
-            <input
+            </div>
+            <div className="mt-3">
+              <label htmlFor="placeholderInput" className="form-label">
+                State
+              </label>
+              <input
                 type="text"
                 className="form-control"
                 id="stateInput"
                 placeholder="Enter State"
-                {...register("s_state", {
+                {...register("shipping_state", {
                   required: true,
                   message: "Shipping State tate is required",
                 })}
               />
               {
                 <span className="error text-red-600">
-                  {errors?.s_state?.type == "required" && "State is required"}
-                  {errors?.s_state?.type == "apierr" && errors?.s_state?.message}
+                  {errors?.shipping_state?.type == "required" &&
+                    "State is required"}
+                  {errors?.shipping_state?.type == "apierr" &&
+                    errors?.shipping_state?.message}
                 </span>
               }
-          </div>
-          <div className="mt-3">
-            <label htmlFor="placeholderInput" className="form-label">
-              Country
-            </label>
-            <input
+            </div>
+            <div className="mt-3">
+              <label htmlFor="placeholderInput" className="form-label">
+                Country
+              </label>
+              <input
                 type="text"
                 className="form-control"
                 id="countryInput"
                 placeholder="Enter Country"
-                {...register("s_country", {
+                {...register("shipping_country", {
                   required: true,
                   message: "Shipping Country is required",
                 })}
               />
               {
                 <span className="error text-red-600">
-                  {errors?.s_country?.type == "required" && "Country is required"}
-                  {errors?.s_country?.type == "apierr" &&
-                    errors?.s_country?.message}
+                  {errors?.shipping_country?.type == "required" &&
+                    "Country is required"}
+                  {errors?.shipping_country?.type == "apierr" &&
+                    errors?.shipping_country?.message}
                 </span>
               }
+            </div>
           </div>
-        </div>
         </div>
         <div className="flex items-center justify-between">
           <div className="">
@@ -410,7 +494,7 @@ export default function AddressForm({ userInfo }) {
             </div>
           </div>
         </div>
-        </form>
+      </form>
     </>
   );
 }

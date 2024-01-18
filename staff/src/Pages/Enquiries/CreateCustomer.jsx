@@ -3,6 +3,8 @@
 import {  useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCreateCustomerMutation } from "../../services/api";
+import axios from "axios";
+
 export default function CreateCustomer({ id,type, onHide }) {
   const [apiErr, setApiErr] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -27,6 +29,7 @@ export default function CreateCustomer({ id,type, onHide }) {
         handleSubmit,
         setError,
         setValue,
+        watch,
         formState: { errors },
       } = useForm({
         defaultValues: {
@@ -34,6 +37,8 @@ export default function CreateCustomer({ id,type, onHide }) {
         },
         mode: "all",
       });
+  
+  const zipcode = watch("zip");
   
     useEffect(() => {
       setCustomerId(id);
@@ -121,6 +126,37 @@ export default function CreateCustomer({ id,type, onHide }) {
       console.log(error);
       console.log(error?.data?.errors?.email);
   }
+
+      const fetchCSC = async (value) => {
+        try {
+          const response = await axios.post(
+            "https://controller.callcentreproject.com/bdo-api/get-postal-code",
+            { zip: value },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem(
+                  "staff_auth_token"
+                )}`,
+              },
+            }
+          );
+          console.log(response?.data);
+          if (response) {
+            setValue("city", response?.data?.data?.postal_data?.taluq);
+            setValue("state", response?.data?.data?.postal_data?.state);
+            setValue("country", response?.data?.data?.postal_data?.country);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      useEffect(() => {
+        if (zipcode?.length == 6) {
+          console.log(zipcode, "billingzip");
+          fetchCSC(zipcode, "billing");
+        }
+      }, [zipcode]);
 
 
   
@@ -214,7 +250,7 @@ export default function CreateCustomer({ id,type, onHide }) {
                       className="form-control"
                       placeholder="Enter Position"
                       {...register("position", {
-                        required: true,
+                        required: false,
                         message: "Position title is required",
                       })}
                     />
@@ -302,7 +338,7 @@ export default function CreateCustomer({ id,type, onHide }) {
                       className="form-control"
                       placeholder="Enter Company"
                       {...register("company", {
-                        required: true,
+                        required: false,
                         message: "Company is required",
                       })}
                     />
@@ -327,7 +363,7 @@ export default function CreateCustomer({ id,type, onHide }) {
                       className="form-control"
                       placeholder="Enter Website"
                       {...register("website", {
-                        required: true,
+                        required: false,
                         message: "Website is required",
                       })}
                     />
@@ -352,7 +388,7 @@ export default function CreateCustomer({ id,type, onHide }) {
                       className="form-control"
                       placeholder="Enter Website"
                       {...register("gst_no", {
-                        required: true,
+                        required: false,
                         message: "GST no is required",
                       })}
                     />
@@ -377,7 +413,7 @@ export default function CreateCustomer({ id,type, onHide }) {
                       rows=""
                       cols=""
                       {...register("address", {
-                        required: true,
+                        required: false,
                         message: "Address is required",
                         maxLength: 250,
                         minLength: 25,
@@ -456,7 +492,7 @@ export default function CreateCustomer({ id,type, onHide }) {
                       type="text"
                       className="form-control"
                       id="cityInput"
-                      placeholder="Enter State"
+                      placeholder="Enter City"
                       {...register("city", {
                         required: true,
                         message: "City is required",
@@ -482,7 +518,7 @@ export default function CreateCustomer({ id,type, onHide }) {
                       id="countryInput"
                       placeholder="Enter City"
                       {...register("country", {
-                        required: true,
+                        required: false,
                         message: "City is required",
                       })}
                     />

@@ -103,7 +103,7 @@ export default function Navbar() {
               <li className="nav-item">
                 <a
                   className={`nav-link menu-link ${
-                    location?.pathname?.includes("/customers") ? "active" : ""
+                    location?.pathname?.includes("customer") ? "active" : ""
                   }`}
                   href="/customers"
                 >

@@ -3,17 +3,63 @@
 
 import { useEffect, useState } from "react";
 import EditEnquiry from "./EditEnquiryForm";
-import { useLazyEnquiriesPaginationQuery } from "../../services/api";
+import {
+  useLazyEnquirySearchQuery,
+  useLazyEnquiriesPaginationQuery,
+} from "../../services/api";
 import {Modal} from "react-bootstrap"
+import Loader from "../Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { hideLoader, showLoader } from "../../reducers/loader";
+import TableLoader from "../TableLoader";
 
 
     
 
 
 const DataTable = ({ enquiriesData, type, showModal, hideModal }) => {
+  const dispatch = useDispatch();
+  const loaderState = useSelector((state) => state.loader?.value);
 const [tableData, setTableData] = useState([])
   const [editEnqId, setEditEnqId] = useState({})
-    const [editModalShow, setEditModalShow] = useState(false);
+  const [editModalShow, setEditModalShow] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  const [enquiriesSearch, { data, isLoading }] = useLazyEnquirySearchQuery();
+
+  useEffect(() => {
+
+    dispatch(showLoader())
+    const debounceTimer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm, "searchTerm");
+      console.log(searchTerm)
+      if (searchTerm != "") {
+        enquiriesSearch({ searchkey: searchTerm, type: "NEW" }).then((res) => {
+          console.log(res, "searchTerm");
+          setTableData(res?.data);
+        });
+      } else {
+        setTableData(enquiriesData);
+      }
+      dispatch(hideLoader())
+    }, 1500);
+    // Clear the timeout on each key press to reset the timer
+    return () => {
+      clearTimeout(debounceTimer);
+    };
+  }, [searchTerm, enquiriesData]);
+
+    useEffect(() => {
+      // Replace this with your actual search logic (e.g., API call)
+      console.log("Searching with debounced term:", debouncedSearchTerm);
+    }, [debouncedSearchTerm]);
+
+    // Handler for input change
+    const handleInputChange = (event) => {
+      setSearchTerm(event.target.value);
+    };
+
 
     const handleClose = () => setEditModalShow(false);
   const handleShow = () => {
@@ -30,7 +76,6 @@ const [tableData, setTableData] = useState([])
     error,
   }] = useLazyEnquiriesPaginationQuery();
   
-  console.log(pageData,loading,error)
   
   const handleNext = () => {
     nextPage({ type: `NEW`, no: enquiriesData?.data?.enquiries?.current_page + 1 }).then((res) => {
@@ -65,19 +110,24 @@ const [tableData, setTableData] = useState([])
     setEditEnqId(row)
     setEditModalShow(true)
   }
-
-console.log(enquiriesData?.data?.enquiries)
-
   
-  
-
-
-
-
-
   // Render the table
   return (
     <>
+      {loading || isLoading && <Loader />}
+      <div className="text-end flex justify-end">
+        <label className="flex items-center gap-3">
+          Search:
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={handleInputChange}
+            className="form-control form-control-sm"
+            placeholder="Search Enquiries"
+            aria-controls="example"
+          />
+        </label>
+      </div>
       <div className="row gy-2 mb-2" id="candidate-list">
         <div className="col-md-12 col-lg-12">
           <table
@@ -139,9 +189,7 @@ console.log(enquiriesData?.data?.enquiries)
                     <td className="text-start">
                       <div>
                         <a
-                          onClick={() => 
-                            handleEditEnquiry(row)
-                          }
+                          onClick={() => handleEditEnquiry(row)}
                           className="btn btn-soft-warning py-1"
                         >
                           <i className="mdi mdi-square-edit-outline"></i> Edit
@@ -161,7 +209,15 @@ console.log(enquiriesData?.data?.enquiries)
                     </td>
                   </tr>
                 ))}
+              {tableData?.data?.enquiries?.data?.length == 0 && (
+                <tr>
+                  <td colSpan={8}>
+                    <p className="text-center w-full text-lg">No data found</p>
+                  </td>
+                </tr>
+              )}
             </tbody>
+            {loaderState && <TableLoader />}
           </table>
 
           <div className="flex justify-between">
@@ -284,7 +340,9 @@ console.log(enquiriesData?.data?.enquiries)
               ></button>
             </Modal.Header>
             <Modal.Body>
-              {editEnqId && <EditEnquiry info={editEnqId} handleClose={handleClose} />}
+              {editEnqId && (
+                <EditEnquiry info={editEnqId} handleClose={handleClose} />
+              )}
             </Modal.Body>
           </div>
         </div>

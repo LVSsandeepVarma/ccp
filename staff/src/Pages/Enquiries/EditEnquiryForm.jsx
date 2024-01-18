@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useEditEnquiryMutation } from "../../services/api";
 import Select from "react-select"
 import Flatpickr from "react-flatpickr";
+import axios from "axios";
 
 
 export default function EditEnquiry({ info, handleClose }) {
@@ -18,6 +19,8 @@ export default function EditEnquiry({ info, handleClose }) {
     register,
     handleSubmit,
     setError,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -42,6 +45,8 @@ export default function EditEnquiry({ info, handleClose }) {
     },
     mode: "all",
   });
+
+      const zipcode = watch("zip");
 
   useEffect(() => {
     if (apiErr) {
@@ -131,6 +136,38 @@ export default function EditEnquiry({ info, handleClose }) {
     }
   };
   console.log(errors);
+
+  
+    const fetchCSC = async (value) => {
+      try {
+        const response = await axios.post(
+          "https://controller.callcentreproject.com/bdo-api/get-postal-code",
+          { zip: value },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem(
+                "staff_auth_token"
+              )}`,
+            },
+          }
+        );
+        console.log(response?.data);
+        if (response) {
+          setValue("city", response?.data?.data?.postal_data?.taluq);
+          setValue("state", response?.data?.data?.postal_data?.state);
+          // setValue("country", response?.data?.data?.postal_data?.country);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    useEffect(() => {
+      if (zipcode?.length == 6) {
+        console.log(zipcode, "billingzip");
+        fetchCSC(zipcode, "billing");
+      }
+    }, [zipcode]);
 
   return (
     <>
