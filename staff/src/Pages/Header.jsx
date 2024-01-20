@@ -817,7 +817,7 @@ export default function Header() {
                           <div className="w-25 w-sm-50 pt-3 mx-auto">
                             {" "}
                             <img
-                              src="assets/images/svg/bell.svg"
+                              src="/assets/images/svg/bell.svg"
                               className="img-fluid"
                               alt="user-pic"
                             />{" "}

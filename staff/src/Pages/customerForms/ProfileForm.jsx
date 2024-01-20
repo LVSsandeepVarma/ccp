@@ -149,7 +149,7 @@ export default function ProfileForm({userInfo}) {
     const fetchCSC = async (value) => {
       try {
         const response = await axios.post(
-          "https://controller.callcentreproject.com/bdo-api/get-postal-code",
+          "https://controller.connetz.shop/bdo-api/get-postal-code",
           { zip: value },
           {
             headers: {
@@ -178,12 +178,12 @@ export default function ProfileForm({userInfo}) {
       }
     };
 
-    useEffect(() => {
-      if (zipcode?.length == 6) {
-        console.log(zipcode, "billingzip");
-        fetchCSC(zipcode, "billing");
-      }
-    }, [zipcode]);
+    // useEffect(() => {
+    //   if (zipcode?.length == 6 ) {
+    //     console.log(zipcode, "billingzip");
+    //     fetchCSC(zipcode, "billing");
+    //   }
+    // }, [zipcode]);
 
   return (
     <>
@@ -242,7 +242,7 @@ export default function ProfileForm({userInfo}) {
           </div>
           <div className="col-xxl-3 col-md-6">
             <label htmlFor="placeholderInput" className="form-label">
-              VAT/GST Number
+              VAT/GST Number<span className="text-danger">*</span>
             </label>
             <input
               type="text"
@@ -271,7 +271,7 @@ export default function ProfileForm({userInfo}) {
               id=""
               placeholder="Company Website"
               {...register("website", {
-                required: true,
+                required: false,
                 message: "Website is required",
               })}
             />
@@ -284,7 +284,7 @@ export default function ProfileForm({userInfo}) {
           </div>
           <div className="col-xxl-12 col-md-12 mt-3">
             <label htmlFor="placeholderInput" className="form-label">
-              Company Address
+              Company Address <span className="text-danger">*</span>
             </label>
             <textarea
               name="name"
@@ -315,6 +315,7 @@ export default function ProfileForm({userInfo}) {
                 placeholder="Enter Postal Code"
                 {...register("zip", {
                   required: true,
+                  onBlur: ()=>{fetchCSC(zipcode)},
                   message: "Zip code is required",
                 })}
               />
@@ -407,16 +408,16 @@ export default function ProfileForm({userInfo}) {
               placeholder="Select Currency"
               options={currencyOptions}
               defaultValue={{ label: "INR (₹)", value: 1 }}
-              {...register("note", {
+              {...register("currency", {
                 required: true,
-                message: "Note is required",
+                message: "Currency is required",
               })}
             />
             {
               <span className="error text-red-600">
-                {errors?.note?.type == "required" && "Note is required"}
-                {errors?.note?.type == "apierr" &&
-                  errors?.note?.message}
+                {errors?.currency?.type == "required" && "Currency is required"}
+                {errors?.currency?.type == "apierr" &&
+                  errors?.currency?.message}
               </span>
             }
           </div>

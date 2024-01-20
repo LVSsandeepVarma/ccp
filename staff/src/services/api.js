@@ -18,7 +18,7 @@ const onQueryStartedErrorToast = async(args, { queryFulfilled }) => {
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://controller.callcentreproject.com/bdo-api",
+    baseUrl: "https://controller.connetz.shop/bdo-api",
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("staff_auth_token");
       if (token) {
@@ -28,7 +28,7 @@ export const api = createApi({
       return headers;
     },
   }),
-  tagTypes: ["customers"],
+  tagTypes: ["customers", "enquiries", "customerInvoices"],
   endpoints: (builder) => ({
     getUserInfo: builder.query({
       query: () => "/get-user-info",
@@ -55,6 +55,7 @@ export const api = createApi({
       query: (type) => ({
         url: `/enquiries/by-page-type?type=${type}`,
       }),
+      providesTags: ["enquiries"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
     enquiriesPagination: builder.query({
@@ -77,6 +78,7 @@ export const api = createApi({
         },
       }),
       middleware: bearerMiddleware,
+      invalidatesTags: ["enquiries"],
     }),
     createCustomer: builder.mutation({
       query: ({ data }) => ({
@@ -92,6 +94,7 @@ export const api = createApi({
         },
       }),
       middleware: bearerMiddleware,
+      invalidatesTags: ["enquiries", "customers"],
     }),
     editEnquiry: builder.mutation({
       query: ({ data }) => ({
@@ -107,6 +110,7 @@ export const api = createApi({
         },
       }),
       middleware: bearerMiddleware,
+      invalidatesTags: ["enquiries"],
     }),
     commentEnquiry: builder.mutation({
       query: ({ data }) => ({
@@ -122,6 +126,7 @@ export const api = createApi({
         },
       }),
       middleware: bearerMiddleware,
+      invalidatesTags: ["enquiries"],
     }),
     commentLogs: builder.query({
       query: (args) => ({
@@ -134,6 +139,7 @@ export const api = createApi({
         },
       }),
       middleware: bearerMiddleware,
+      invalidatesTags: ["enquiries"],
     }),
     getCustomers: builder.query({
       query: () => ({
@@ -160,7 +166,7 @@ export const api = createApi({
       query: (arg) => ({
         url: `/customers/view?id=${arg?.id}&type=${arg?.type}`,
       }),
-      providesTags: ["customers"],
+      providesTags: ["customers", "customerInvoices"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
     updateProfile: builder.mutation({
@@ -220,7 +226,7 @@ export const api = createApi({
           console.log(err);
         },
       }),
-      invalidatesTags: ["customers"],
+      invalidatesTags: ["customerInvoices"],
       middleware: bearerMiddleware,
     }),
     enquirySearch: builder.query({
@@ -274,6 +280,20 @@ export const api = createApi({
     downloadInvoice: builder.mutation({
       query: (data) => ({
         url: "/customers/invoices/download",
+        method: "POST",
+        body: data,
+        onSuccess: (res) => {
+          console.log("success", res);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      }),
+      middleware: bearerMiddleware,
+    }),
+    sendInvoice: builder.mutation({
+      query: (data) => ({
+        url: "/customers/invoices/send",
         method: "POST",
         body: data,
         onSuccess: (res) => {
@@ -361,7 +381,21 @@ export const api = createApi({
           console.log(err);
         },
       }),
-      invalidatesTags: ["customers"],
+      invalidatesTags: ["customers","customerInvoices"],
+      middleware: bearerMiddleware,
+    }),
+    sendProposal: builder.mutation({
+      query: (data) => ({
+        url: "/customers/proposals/send",
+        method: "POST",
+        body: data,
+        onSuccess: (res) => {
+          console.log("success", res);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      }),
       middleware: bearerMiddleware,
     }),
     viewProposal: builder.query({
@@ -412,6 +446,7 @@ export const {
   useCurrencyQuery,
   useProductsQuery,
   useCreateInvoiceMutation,
+  useSendInvoiceMutation,
   useLazyEnquirySearchQuery,
   useLazyCustomersSearchQuery,
   useViewInvoiceQuery,
@@ -423,6 +458,7 @@ export const {
   useLazyViewPaymentsQuery,
   useLazyPaymentModesQuery,
   useCreateProposalMutation,
+  useSendProposalMutation,
   useViewProposalQuery,
   useDownloadProposalMutation,
 } = api;

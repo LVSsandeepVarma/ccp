@@ -9,6 +9,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "./Loader";
 import { hideLoader, showLoader } from "../reducers/loader";
+import TableLoader from "./TableLoader";
 
 
 
@@ -119,7 +120,7 @@ export default function OTPVerification() {
         try {
           dispatch(showLoader());
           const response = await axios.post(
-            "https://controller.callcentreproject.com/bdo-api/verify/hash",
+            "https://controller.connetz.shop/bdo-api/verify/hash",
             {
               hash: params?.id,
             }
@@ -162,7 +163,7 @@ export default function OTPVerification() {
         }
          dispatch(showLoader())
     const response = await axios.post(
-      "https://controller.callcentreproject.com/bdo-api/verify/otp",
+      "https://controller.connetz.shop/bdo-api/verify/otp",
       { otp: otp, hash:params?.id }
     );
       if (response?.data?.status) {
@@ -176,7 +177,7 @@ export default function OTPVerification() {
     };
   return (
     <>
-      {loaderState && <Loader />}
+      {loaderState && <TableLoader />}
       <div className="auth-page-wrapper pt-5">
         {/* <!--  auth page bg --> */}
         <div className="auth-one-bg-position auth-one-bg">

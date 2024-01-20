@@ -5,6 +5,7 @@ import SimpleBar from "simplebar-react";
 import {
   useCreatePaymentMutation,
   useLazyPaymentModesQuery,
+  useSendProposalMutation,
   useViewProposalQuery,
 } from "../../services/api";
 import Loader from "../Loader";
@@ -20,6 +21,7 @@ import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import FilePondPluginFileEncode from "filepond-plugin-file-encode";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+import TableLoader from "../TableLoader";
 
 registerPlugin(
   FilePondPluginImagePreview,
@@ -29,11 +31,12 @@ registerPlugin(
 );
 
 // eslint-disable-next-line no-unused-vars
-export default function ProposalModal({ show, hide, invId }) {
+export default function ProposalModal({ show, hide, proposalId }) {
   const [paymentFormToggle, setPaymentFormToggle] = useState(false);
   const [files, setFiles] = useState([]);
   const [encodedFile, setEncodedFile] = useState("");
   const [apiErr, setApiErr] = useState("");
+      const [proposalSubmitted, setProposalSubmitted] = useState(false);
   const [fileErr, setFileErr] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const {
@@ -73,13 +76,27 @@ export default function ProposalModal({ show, hide, invId }) {
     setEncodedFile(base64String);
     setFiles(updatedFiles);
   };
-  console.log(invId);
+  console.log(proposalId);
+
+        const [
+          sendProposal,
+          { data: proposalRes, isLoading: proposalLoading },
+        ] = useSendProposalMutation();
+
+        const handleSendProposal = async () => {
+          const response = await sendProposal({id: proposalId});
+          console.log(response, "response");
+          if (response?.data?.status) {
+            setSuccessMsg(response?.data?.message);
+            return;
+          }
+        };
 
   // const [invDownload] = useDownloadInvoiceMutation()
 
   const handleDownlaodProposal = async () => {
     const response = await axios.get(
-      `https://controller.callcentreproject.com/bdo-api/customers/proposals/download?id=${invId}`,
+      `https://controller.connetz.shop/bdo-api/customers/proposals/download?id=${proposalId}`,
       {
         responseType: "arraybuffer",
         headers: {
@@ -100,7 +117,7 @@ export default function ProposalModal({ show, hide, invId }) {
     }
   };
 
-  const { data, isLoading, error } = useViewProposalQuery(invId);
+  const { data, isLoading, error } = useViewProposalQuery(proposalId);
   if (error) {
     console.log(error);
   }
@@ -166,7 +183,7 @@ export default function ProposalModal({ show, hide, invId }) {
         ...data,
         payment_mode: data?.payment_mode?.value,
         transaction_proof: encodedFile,
-        invoice_id: invId,
+        invoice_id: proposalId,
         date: convertToISODate(data?.date),
       });
       console?.log(response, response?.data?.message);
@@ -205,7 +222,7 @@ export default function ProposalModal({ show, hide, invId }) {
 
   return (
     <>
-      {isLoading && <Loader />}
+      {isLoading || (proposalLoading && <TableLoader />)}
       <Modal
         className=""
         show={show}
@@ -217,8 +234,14 @@ export default function ProposalModal({ show, hide, invId }) {
         <div className="modal-content">
           <Modal.Header c>
             <h5 className="modal-title" id="viewInvoiceLabel">
-              {data?.data?.proposal?.prefix}-{data?.data?.id}
-              
+              {data?.data?.proposal?.prefix}-
+              {data?.data?.id?.toString().padStart(5, "0") +
+                "/" +
+                (new Date(data?.data?.proposal?.date).getMonth() + 1)
+                  ?.toString()
+                  ?.padStart(2, "0") +
+                "/" +
+                new Date(data?.data?.proposal?.date).getFullYear()}
             </h5>
 
             <button
@@ -286,7 +309,21 @@ export default function ProposalModal({ show, hide, invId }) {
                               </p>
                               <h5 className="fs-14 mb-0">
                                 #{data?.data?.proposal?.prefix}-
-                                <span id="invoice-no">{data?.data?.id}</span>
+                                <span id="invoice-no">
+                                  {data?.data?.id?.toString().padStart(5, "0") +
+                                    "/" +
+                                    (
+                                      new Date(
+                                        data?.data?.proposal?.date
+                                      ).getMonth() + 1
+                                    )
+                                      ?.toString()
+                                      ?.padStart(2, "0") +
+                                    "/" +
+                                    new Date(
+                                      data?.data?.proposal?.date
+                                    ).getFullYear()}
+                                </span>
                               </h5>
                             </div>
                             {/* <!--end col--> */}
@@ -399,7 +436,7 @@ export default function ProposalModal({ show, hide, invId }) {
                               <thead>
                                 <tr className="table-active">
                                   <th scope="col" className="w-[50px]">
-                                    #
+                                    id
                                   </th>
                                   <th scope="col">Product Details</th>
                                   <th scope="col">Rate</th>
@@ -413,7 +450,12 @@ export default function ProposalModal({ show, hide, invId }) {
                                 {data?.data?.proposal?.proposal_items?.map(
                                   (item, ind) => (
                                     <tr key={ind}>
-                                      <th scope="row">{item?.id}</th>
+                                      <th scope="row">
+                                        {item?.id
+                                          ?.toString()
+                                          ?.padStart(2, "0")
+                                          }
+                                      </th>
                                       <td className="text-start">
                                         <span className="fw-medium font-bold">
                                           {item?.description}
@@ -558,22 +600,34 @@ export default function ProposalModal({ show, hide, invId }) {
             </Modal.Body>
           </SimpleBar>
           <Modal.Footer className="modal-footer">
-            <div className="hstack gap-2 justify-content-end d-print-none">
-              <button
-                className="btn btn-secondary"
-                onClick={() => {
-                  window.print(data?.data?.proposal?.pdf_link);
-                }}
-              >
-                <i className="ri-printer-line align-bottom me-1"></i> Print
-              </button>
-              <button
-                className="btn btn-primary bg-primary "
-                onClick={() => handleDownlaodProposal()}
-              >
-                <i className="ri-download-2-line align-bottom me-1"></i>{" "}
-                Download
-              </button>
+            <div className="flex justify-between items-center w-full">
+              <div className="hstack gap-2 justify-content-end d-print-none">
+                <p className="text-success text-start">{successMsg}</p>
+              </div>
+              <div className="hstack gap-2 justify-content-end d-print-none">
+                <button
+                  className="btn btn-info bg-info"
+                  onClick={() => handleSendProposal()}
+                >
+                  <i className="ri-send-plane-fill align-bottom me-1"></i> Send
+                  Proposal
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    window.print(data?.data?.proposal?.pdf_link);
+                  }}
+                >
+                  <i className="ri-printer-line align-bottom me-1"></i> Print
+                </button>
+                <button
+                  className="btn btn-primary bg-primary "
+                  onClick={() => handleDownlaodProposal()}
+                >
+                  <i className="ri-download-2-line align-bottom me-1"></i>{" "}
+                  Download
+                </button>
+              </div>
             </div>
           </Modal.Footer>
         </div>

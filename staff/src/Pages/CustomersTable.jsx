@@ -364,8 +364,8 @@ export default function CustomersTable() {
                 </a>
               </td>
               <td className="text-start">{customer?.primary_contact?.name}</td>
-              <td>
-                <span className="badge badge-soft-info fs-12 text-start">
+              <td className="text-start">
+                <span className="badge badge-soft-info fs-12 !text-start">
                   {customer?.primary_contact?.email}
                 </span>
               </td>

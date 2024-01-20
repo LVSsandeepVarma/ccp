@@ -116,7 +116,7 @@ export default function ProfileChat() {
                                       <div className="avatar-xxs">
                                         {" "}
                                         <img
-                                          src="assets/images/users/avatar-2.jpg"
+                                          src="/assets/images/users/avatar-2.jpg"
                                           className="rounded-circle img-fluid userprofile"
                                           alt=""
                                         />
@@ -178,7 +178,7 @@ export default function ProfileChat() {
                                       <div className="avatar-xxs">
                                         {" "}
                                         <img
-                                          src="assets/images/users/avatar-2.jpg"
+                                          src="/assets/images/users/avatar-2.jpg"
                                           className="rounded-circle img-fluid userprofile"
                                           alt=""
                                         />
@@ -233,7 +233,7 @@ export default function ProfileChat() {
                                     <div className="d-flex align-items-center">
                                       <div className="flex-shrink-0 chat-user-img online user-own-img align-self-center me-3 ms-0">
                                         <img
-                                          src="assets/images/users/avatar-2.jpg"
+                                          src="/assets/images/users/avatar-2.jpg"
                                           className="rounded-circle avatar-xs"
                                           alt=""
                                         />
@@ -372,7 +372,7 @@ export default function ProfileChat() {
                                 <div className="conversation-list">
                                   <div className="chat-avatar">
                                     <img
-                                      src="assets/images/users/avatar-6.jpg"
+                                      src="/assets/images/users/avatar-6.jpg"
                                       alt=""
                                     />
                                   </div>
@@ -526,7 +526,7 @@ export default function ProfileChat() {
                                 <div className="conversation-list">
                                   <div className="chat-avatar">
                                     <img
-                                      src="assets/images/users/avatar-6.jpg"
+                                      src="/assets/images/users/avatar-6.jpg"
                                       alt=""
                                     />
                                   </div>
@@ -737,7 +737,7 @@ export default function ProfileChat() {
                                 <div className="conversation-list">
                                   <div className="chat-avatar">
                                     <img
-                                      src="assets/images/users/avatar-6.jpg"
+                                      src="/assets/images/users/avatar-6.jpg"
                                       alt=""
                                     />
                                   </div>
@@ -754,7 +754,7 @@ export default function ProfileChat() {
                                             >
                                               {" "}
                                               <img
-                                                src="assets/images/small/img-1.jpg"
+                                                src="/assets/images/small/img-1.jpg"
                                                 alt=""
                                                 className="rounded border"
                                               />{" "}
@@ -830,7 +830,7 @@ export default function ProfileChat() {
                                             >
                                               {" "}
                                               <img
-                                                src="assets/images/small/img-2.jpg"
+                                                src="/assets/images/small/img-2.jpg"
                                                 alt=""
                                                 className="rounded border"
                                               />{" "}

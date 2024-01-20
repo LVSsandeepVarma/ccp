@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { hideLoader, showLoader } from "../reducers/loader";
 import axios from "axios";
 import Loader from "./Loader";
+import TableLoader from "./TableLoader";
 // import "../../App.css"
 
 //
@@ -112,7 +113,7 @@ export default function ForgotPassword() {
     try {
       dispatch(showLoader());
       const response = await axios.post(
-        "https://controller.callcentreproject.com/bdo-api/reset-password-link",
+        "https://controller.connetz.shop/bdo-api/reset-password-link",
         { email: data?.Email }
       );
       if (response?.data?.status) {
@@ -128,7 +129,7 @@ export default function ForgotPassword() {
 
   return (
     <>
-      {loaderState && <Loader />}
+      {loaderState && <TableLoader />}
       <div className="auth-page-wrapper pt-5">
         {/* <!--  auth page bg --> */}
         <div className="auth-one-bg-position auth-one-bg">

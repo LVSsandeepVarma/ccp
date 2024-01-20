@@ -4,46 +4,55 @@ import { useDeletePaymentMutation, useLazyViewPaymentsQuery } from "../../servic
 import TableLoader from "../TableLoader";
 import InvoiceModal from "./InvoiceModal";
 import UpdateInvoiceModal from "./updateInvoiceModal";
+import {Table} from "react-bootstrap"
 
 /* eslint-disable react/prop-types */
-export default function PaymentsTable({ customerData, currentTab }) {
-  const [activePaymentTab, setActivePaymentTab] = useState(0)
-  const [showPaymentDetails, setShowPaymentDetails] = useState("")
-  const [showPaymentView, setShowPaymentView] = useState(false)
+export default function PaymentsTable({ customerData, currentTab, handleShowInvoice }) {
+  const [activePaymentTab, setActivePaymentTab] = useState(0);
+  const [showPaymentDetails, setShowPaymentDetails] = useState("");
+  const [showPaymentView, setShowPaymentView] = useState(false);
   const [showInvoice, setShowInvoice] = useState(false);
   const [paymentFormToggle, setPaymentFormToggle] = useState(false);
   const [invId, setInvId] = useState();
-  const [paymentId, setPaymentId] = useState("")
-  const [deletePayment, {data:paymentDeleteResponse, isLoading: deleteLoading, error:deleteErr}] = useDeletePaymentMutation()
+  const [paymentId, setPaymentId] = useState("");
+  const [
+    deletePayment,
+    { data: paymentDeleteResponse, isLoading: deleteLoading, error: deleteErr },
+  ] = useDeletePaymentMutation();
 
-  const handleDelete = async(paymentID) => {
+  const handleDelete = async (paymentID) => {
     const response = await deletePayment({ id: paymentID });
     if (response) {
-      console.log(response)
-      window.onload()
+      console.log(response);
+      window.onload();
     }
-  }
+  };
 
-  const [viewPayment, { data: paymentInfo, isLoading: paymentViewLoading, error: paymentviewError }] = useLazyViewPaymentsQuery()
-  
+  const [
+    viewPayment,
+    {
+      data: paymentInfo,
+      isLoading: paymentViewLoading,
+      error: paymentviewError,
+    },
+  ] = useLazyViewPaymentsQuery();
+
   useEffect(() => {
-    viewPayment(showPaymentDetails)
+    viewPayment(showPaymentDetails);
     setTimeout(() => {
       if (showPaymentDetails) {
         setShowPaymentView(true);
       }
-      
-    },1000)
-  }, [showPaymentDetails])
-  
-    const hideinv = () => {
-      setShowInvoice(false);
-  };
-  
-  const togglePaymentForm = () => {
-    setPaymentFormToggle(!paymentFormToggle)
-  }
+    }, 1000);
+  }, [showPaymentDetails]);
 
+  const hideinv = () => {
+    setShowInvoice(false);
+  };
+
+  const togglePaymentForm = () => {
+    setPaymentFormToggle(!paymentFormToggle);
+  };
 
   return (
     <>
@@ -101,13 +110,15 @@ export default function PaymentsTable({ customerData, currentTab }) {
                   paymentInfo ? "col-md-8" : "col-md-12"
                 } slideAnim`}
               >
-                <table
+                <Table
+                  responsive
                   id="tbl_payments"
-                  className="table table-borderedless dt-responsive nowrap table-striped align-middle w-full"
+                  className="table table-borderedless responsive  table-striped align-middle w-full"
                 >
                   <thead>
                     <tr className="bg-light">
-                      <th>Payment No.</th>
+                      <th>Sno No.</th>
+                      <th>Payment No</th>
                       <th>Invoice No.</th>
                       <th>Payment Mode</th>
                       <th>Transaction ID</th>
@@ -122,18 +133,32 @@ export default function PaymentsTable({ customerData, currentTab }) {
                         (payment, ind) => {
                           if (payment?.status == activePaymentTab) {
                             return (
-                              <tr
-                                key={ind}
-                                className="cursor-pointer"
-                                onClick={() =>
-                                  setShowPaymentDetails(payment?.id)
-                                }
-                              >
-                                <td className="text-info text-start">
-                                  {payment?.id}
+                              <tr key={ind}>
+                                <td className=" text-start">{payment?.id}</td>
+                                <td
+                                  className="text-start text-secondary cursor-pointer"
+                                  onClick={() =>
+                                    setShowPaymentDetails(payment?.id)
+                                  }
+                                >
+                                  {payment?.payment_id}
                                 </td>
-                                <td className="text-info text-start">
-                                  INV-{payment?.invoice_id}
+                                <td
+                                  className="text-info text-start cursor-pointer"
+                                  onClick={() =>
+                                    handleShowInvoice(payment?.invoice_id)
+                                  }
+                                >
+                                  INV-
+                                  {payment?.invoice_id
+                                    ?.toString()
+                                    .padStart(5, "0") +
+                                    "/" +
+                                    (new Date(payment?.date).getMonth() + 1)
+                                      ?.toString()
+                                      ?.padStart(2, "0") +
+                                    "/" +
+                                    new Date(payment?.date).getFullYear()}
                                 </td>
                                 <td className="text-start">Bank Account</td>
                                 <td className="text-start">
@@ -194,6 +219,9 @@ export default function PaymentsTable({ customerData, currentTab }) {
                             );
                           } else {
                             return (
+                              customerData?.data?.res_data?.payments?.filter(
+                                (payment) => payment?.status == activePaymentTab
+                              )?.length == 0 &&
                               ind == 0 && (
                                 <tr key={ind}>
                                   <td colSpan={8}>
@@ -218,7 +246,7 @@ export default function PaymentsTable({ customerData, currentTab }) {
                     )}
                     {deleteLoading && <TableLoader />}
                   </tbody>
-                </table>
+                </Table>
               </div>
               {showPaymentView && (
                 <div className="col-md-4 pulse">
@@ -227,7 +255,7 @@ export default function PaymentsTable({ customerData, currentTab }) {
                       <div className="position-relative d-inline-block">
                         <img
                           src={paymentInfo?.data?.payment?.transaction_proof}
-                          alt=""
+                          alt="transaction_proof"
                           className=""
                         />
                         <span className="contact-active position-absolute rounded-circle bg-success">
@@ -274,6 +302,18 @@ export default function PaymentsTable({ customerData, currentTab }) {
                               </td>
                               <td className="py-1 text-start">
                                 {paymentInfo?.data?.payment?.payment_mode}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td
+                                valign="top"
+                                className="fw-bold text-start"
+                                scope="row"
+                              >
+                                Note
+                              </td>
+                              <td className="py-1 text-start">
+                                {paymentInfo?.data?.payment?.note}
                               </td>
                             </tr>
                           </tbody>

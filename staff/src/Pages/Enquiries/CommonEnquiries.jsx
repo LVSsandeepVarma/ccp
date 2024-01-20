@@ -4,15 +4,25 @@ import { useEnquiriesQuery } from "../../services/api";
 import Header from "../Header";
 import CommonTable from "./CommonTable";
 import CreateCustomer from "./CreateCustomer";
+import { useEffect } from "react";
 
 export default function Enquiries({ type }) {
   const [enqSelected, setEnqSelected] = useState()
+  const [showEnquiryDetails, setShowEnquiryDetails] = useState(false);
    console.log(type)
 
   const enquirySelected = (row) => {
     console.log(row, "enqSelected")
     setEnqSelected(row)
   }
+
+    useEffect(() => {
+      setTimeout(() => {
+        if (enqSelected) {
+          setShowEnquiryDetails(true);
+        }
+      }, 1000);
+    }, [enqSelected]);
 
   
 
@@ -66,14 +76,26 @@ export default function Enquiries({ type }) {
                             </p>
                             <h4 className="mt-4 ff-secondary fw-semibold h4">
                               <span className="counter-value" data-target="234">
-                                0
+                                {enquiriesData?.data?.counts?.total_enq_count}
                               </span>
                             </h4>
-                            <p className="mb-0 text-muted">
-                              <span className="badge bg-light text-success mb-0">
+                            <p className="mb-0 text-muted opacity-0">
+                              <span
+                                className={`badge bg-light text-${
+                                  enquiriesData?.data?.counts?.ring_per < 0
+                                    ? "danger"
+                                    : "success"
+                                } mb-0`}
+                              >
                                 {" "}
-                                <i className="ri-arrow-up-line align-middle"></i>{" "}
-                                17.32 %
+                                <i
+                                  className={`${
+                                    enquiriesData?.data?.counts?.ring_per < 0
+                                      ? "ri-arrow-down-line align-middle"
+                                      : "ri-arrow-up-line align-middle"
+                                  }`}
+                                ></i>{" "}
+                                {enquiriesData?.data?.counts?.ring_per}%
                               </span>{" "}
                               vs. previous month
                             </p>
@@ -97,20 +119,32 @@ export default function Enquiries({ type }) {
                       <div className="card-body">
                         <div className="d-flex justify-content-between">
                           <div>
-                            <p className="fw-medium text-muted mb-0">{type}</p>
+                            <p className="fw-medium text-muted mb-0">Ringing</p>
                             <h4 className="mt-4 ff-secondary fw-semibold h4">
                               <span
                                 className="counter-value"
                                 data-target="64.5"
                               >
-                                0
+                                {enquiriesData?.data?.counts?.total_ring_count}
                               </span>
                             </h4>
                             <p className="mb-0 text-muted">
-                              <span className="badge bg-light text-danger mb-0">
+                              <span
+                                className={`badge bg-light text-${
+                                  enquiriesData?.data?.counts?.ring_per < 0
+                                    ? "danger"
+                                    : "success"
+                                } mb-0`}
+                              >
                                 {" "}
-                                <i className="ri-arrow-down-line align-middle"></i>{" "}
-                                0.87 %
+                                <i
+                                  className={`${
+                                    enquiriesData?.data?.counts?.ring_per < 0
+                                      ? "ri-arrow-down-line align-middle"
+                                      : "ri-arrow-up-line align-middle"
+                                  }`}
+                                ></i>{" "}
+                                {enquiriesData?.data?.counts?.ring_per}%
                               </span>{" "}
                               vs. previous month
                             </p>
@@ -138,14 +172,26 @@ export default function Enquiries({ type }) {
                             </p>
                             <h4 className="mt-4 ff-secondary fw-semibold h4">
                               <span className="counter-value" data-target="116">
-                                0
+                                {enquiriesData?.data?.counts?.total_post_count}
                               </span>
                             </h4>
                             <p className="mb-0 text-muted">
-                              <span className="badge bg-light text-danger mb-0">
+                              <span
+                                className={`badge bg-light text-${
+                                  enquiriesData?.data?.counts?.post_per < 0
+                                    ? "danger"
+                                    : "success"
+                                } mb-0`}
+                              >
                                 {" "}
-                                <i className="ri-arrow-down-line align-middle"></i>{" "}
-                                2.52 %{" "}
+                                <i
+                                  className={`${
+                                    enquiriesData?.data?.counts?.post_per < 0
+                                      ? "ri-arrow-down-line align-middle"
+                                      : "ri-arrow-up-line align-middle"
+                                  }`}
+                                ></i>{" "}
+                                {enquiriesData?.data?.counts?.post_per}%
                               </span>{" "}
                               vs. previous month
                             </p>
@@ -173,14 +219,26 @@ export default function Enquiries({ type }) {
                             </p>
                             <h4 className="mt-4 ff-secondary fw-semibold h4">
                               <span className="counter-value" data-target="184">
-                                0
+                                {enquiriesData?.data?.counts?.total_notin_count}
                               </span>
                             </h4>
                             <p className="mb-0 text-muted">
-                              <span className="badge bg-light text-success mb-0">
+                              <span
+                                className={`badge bg-light text-${
+                                  enquiriesData?.data?.counts?.notin_per < 0
+                                    ? "danger"
+                                    : "success"
+                                } mb-0`}
+                              >
                                 {" "}
-                                <i className="ri-arrow-up-line align-middle"></i>{" "}
-                                0.63 %{" "}
+                                <i
+                                  className={`${
+                                    enquiriesData?.data?.counts?.notin_per < 0
+                                      ? "ri-arrow-down-line align-middle"
+                                      : "ri-arrow-up-line align-middle"
+                                  }`}
+                                ></i>{" "}
+                                {enquiriesData?.data?.counts?.notin_per}%
                               </span>{" "}
                               vs. previous month
                             </p>
@@ -247,7 +305,7 @@ export default function Enquiries({ type }) {
                     </div>
                     {/* <!--end card--> */}
                   </div>
-                  {enqSelected && (
+                  {showEnquiryDetails && (
                     <div className="col-lg-3 pulse ">
                       <div className="card" id="contact-view-detail">
                         <div className="card-body text-center">
@@ -352,7 +410,13 @@ export default function Enquiries({ type }) {
                                     Date
                                   </td>
                                   <td className="py-1 text-start">
-                                    23 August, 2023
+                                    {new Date(
+                                      enqSelected?.created_at
+                                    ).toLocaleDateString("en-IN", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })}
                                   </td>
                                 </tr>
                                 <tr>
@@ -363,10 +427,16 @@ export default function Enquiries({ type }) {
                                     Last Contacted
                                   </td>
                                   <td className="py-1 text-start">
-                                    15 Dec, 2021{" "}
-                                    <small className="text-muted">
-                                      08:58AM
-                                    </small>
+                                    {new Date(
+                                      enqSelected?.updated_at
+                                    ).toLocaleDateString("en-IN", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: true,
+                                    })}
                                   </td>
                                 </tr>
                               </tbody>

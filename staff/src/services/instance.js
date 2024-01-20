@@ -3,7 +3,7 @@ import { hideLoader, showLoader } from "../reducers/loader";
 
 
 const axiosInstance = axios.create({
-  baseURL: "https://controller.callcentreproject.com/bdo-api",
+  baseURL: "https://controller.connetz.shop/bdo-api",
   headers: {
     accept: `application/json`,
     "Content-Type": "application/json",

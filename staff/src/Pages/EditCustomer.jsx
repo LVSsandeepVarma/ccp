@@ -33,7 +33,15 @@ export default function EditCustomer() {
   const [invId, setInvId] = useState();
   const [proposalId, setProposalId] = useState();
   const [checkedIds, setCheckedIds] = useState([]);
-    const [proposalsCheckedIds, setproposalsCheckedIds] = useState([]);
+  const [proposalsCheckedIds, setproposalsCheckedIds] = useState([]);
+  const [activeProposalTab, setActiveProposalTab] = useState(1);
+
+
+  
+  const handleShowInvoice = (id) => {
+    setInvId(id)
+    setShowInvoice(true)
+  }
 
 const handleProposalsCheckboxChange = (id) => {
   // Use a functional state update to ensure consistency
@@ -69,7 +77,7 @@ const handleProposalsCheckboxChange = (id) => {
   const handleZipInvoices = async() => {
     console.log(typeof(checkedIds), "type")
     const response = await axios.get(
-      `https://controller.callcentreproject.com/bdo-api/customers/invoices/zip-invoice?invoice_ids=${checkedIds}`,
+      `https://controller.connetz.shop/bdo-api/customers/invoices/zip-invoice?invoice_ids=${checkedIds}`,
       {
         responseType: "arraybuffer",
         headers: {
@@ -94,7 +102,7 @@ const handleProposalsCheckboxChange = (id) => {
     const handleZipProposals = async () => {
       console.log(typeof proposalsCheckedIds, "type");
       const response = await axios.get(
-        `https://controller.callcentreproject.com/bdo-api/customers/proposals/zip-proposal?proposal_ids=${proposalsCheckedIds}`,
+        `https://controller.connetz.shop/bdo-api/customers/proposals/zip-proposal?proposal_ids=${proposalsCheckedIds}`,
         {
           responseType: "arraybuffer",
           headers: {
@@ -146,7 +154,11 @@ const handleProposalsCheckboxChange = (id) => {
                   <div className="card">
                     <div className="card-header">
                       <h4 className="card-title mb-1">
-                        #589658 - {customerData?.data?.customer?.first_name}{" "}
+                        #
+                        {customerData?.data?.customer?.id
+                          ?.toString()
+                          ?.padStart(5, "0")}{" "}
+                        - {customerData?.data?.customer?.first_name}{" "}
                         {customerData?.data?.customer?.last_name}
                       </h4>
                       <p className="text-muted mb-0">Customer from Lead</p>
@@ -163,7 +175,7 @@ const handleProposalsCheckboxChange = (id) => {
                         <a
                           className={`nav-link  ${
                             currentTab == "PROFILE"
-                              ? "active show drop-shadow-lg"
+                              ? "active show drop-shadow-lg shadowColor"
                               : ""
                           }`}
                           onClick={() => setcurrentTab("PROFILE")}
@@ -176,7 +188,7 @@ const handleProposalsCheckboxChange = (id) => {
                         <a
                           className={`nav-link ${
                             currentTab == "CONTACTS"
-                              ? "active show drop-shadow-lg"
+                              ? "active show drop-shadow-lg shadowColor"
                               : ""
                           }`}
                           onClick={() => setcurrentTab("CONTACTS")}
@@ -186,7 +198,7 @@ const handleProposalsCheckboxChange = (id) => {
                         <a
                           className={`nav-link ${
                             currentTab == "INVOICES"
-                              ? "active show drop-shadow-lg"
+                              ? "active show drop-shadow-lg shadowColor"
                               : ""
                           }`}
                           id="custom-v-pills-invoices-tab"
@@ -194,13 +206,13 @@ const handleProposalsCheckboxChange = (id) => {
                         >
                           <i className="mdi mdi-note-text"></i> Invoices{" "}
                           <span className="badge rounded-pill text-bg-primary float-end">
-                            3
+                            {customerData?.data?.counts?.pending_invoices}
                           </span>
                         </a>
                         <a
                           className={`nav-link ${
                             currentTab == "PAYMENTS"
-                              ? "active show drop-shadow-lg"
+                              ? "active show drop-shadow-lg shadowColor"
                               : ""
                           }`}
                           id="custom-v-pills-payments-tab"
@@ -211,7 +223,7 @@ const handleProposalsCheckboxChange = (id) => {
                         <a
                           className={`nav-link ${
                             currentTab == "PROPOSALS"
-                              ? "active show drop-shadow-lg"
+                              ? "active show drop-shadow-lg shadowColor"
                               : ""
                           }`}
                           id="custom-v-pills-proposals-tab"
@@ -219,13 +231,13 @@ const handleProposalsCheckboxChange = (id) => {
                         >
                           <i className="mdi mdi-file-powerpoint"></i> Proposals{" "}
                           <span className="badge rounded-pill text-bg-primary float-end">
-                            4
+                            {customerData?.data?.counts?.pending_proposals}
                           </span>
                         </a>
                         <a
                           className={`nav-link ${
                             currentTab == "PROJECTS"
-                              ? "active show drop-shadow-lg"
+                              ? "active show drop-shadow-lg shadowColor"
                               : ""
                           }`}
                           id="custom-v-pills-projects-tab"
@@ -236,7 +248,7 @@ const handleProposalsCheckboxChange = (id) => {
                         <a
                           className={`nav-link ${
                             currentTab == "TICKETS"
-                              ? "active show drop-shadow-lg"
+                              ? "active show drop-shadow-lg shadowColor"
                               : ""
                           }`}
                           id="custom-v-pills-tickets-tab"
@@ -247,7 +259,7 @@ const handleProposalsCheckboxChange = (id) => {
                         <a
                           className={`nav-link ${
                             currentTab == "FILES"
-                              ? "active show drop-shadow-lg"
+                              ? "active show drop-shadow-lg shadowColor"
                               : ""
                           }`}
                           id="custom-v-pills-files-tab"
@@ -258,7 +270,7 @@ const handleProposalsCheckboxChange = (id) => {
                         <a
                           className={`nav-link ${
                             currentTab == "REMAINDERS"
-                              ? "active show drop-shadow-lg"
+                              ? "active show drop-shadow-lg shadowColor"
                               : ""
                           }`}
                           id="custom-v-pills-reminders-tab"
@@ -347,6 +359,7 @@ const handleProposalsCheckboxChange = (id) => {
                                       userInfo={
                                         customerData?.data?.res_data?.getaddress
                                       }
+                                      id={customerData?.data?.customer?.id}
                                     />
                                   </div>
                                   <div
@@ -435,7 +448,7 @@ const handleProposalsCheckboxChange = (id) => {
                           <div className="card-body">
                             <table
                               id="example-1"
-                              className="table table-borderedless dt-responsive nowrap table-striped align-middle w-full"
+                              className="table table-borderedless dt-responsive nowrap table-striped align-middle w-full fadeIn"
                             >
                               <thead>
                                 <tr className="bg-light">
@@ -569,15 +582,12 @@ const handleProposalsCheckboxChange = (id) => {
                                                 className="counter-value"
                                                 data-target="2390.68"
                                               >
-                                                2,390.68
+                                                {parseFloat(
+                                                  customerData?.data?.res_data
+                                                    ?.outstanding_amount
+                                                ).toFixed(2)}
                                               </span>
                                             </h4>
-                                          </div>
-                                          <div className="flex-shrink-0 align-self-end">
-                                            <span className="badge badge-soft-success">
-                                              <i className="ri-arrow-up-s-fill align-middle me-1"></i>
-                                              6.24 %<span> </span>
-                                            </span>
                                           </div>
                                         </div>
                                       </div>
@@ -606,15 +616,12 @@ const handleProposalsCheckboxChange = (id) => {
                                                 className="counter-value"
                                                 data-target="19523.25"
                                               >
-                                                19,523.25
+                                                {parseFloat(
+                                                  customerData?.data?.res_data
+                                                    ?.pastdue_amount
+                                                ).toFixed(2)}
                                               </span>
                                             </h4>
-                                          </div>
-                                          <div className="flex-shrink-0 align-self-end">
-                                            <span className="badge badge-soft-success">
-                                              <i className="ri-arrow-up-s-fill align-middle me-1"></i>
-                                              3.67 %<span> </span>
-                                            </span>
                                           </div>
                                         </div>
                                       </div>
@@ -642,15 +649,12 @@ const handleProposalsCheckboxChange = (id) => {
                                                 className="counter-value"
                                                 data-target="14799.44"
                                               >
-                                                14,799.44
+                                                {parseFloat(
+                                                  customerData?.data?.res_data
+                                                    ?.paid_amount
+                                                ).toFixed(2)}
                                               </span>
                                             </h4>
-                                          </div>
-                                          <div className="flex-shrink-0 align-self-end">
-                                            <span className="badge badge-soft-danger">
-                                              <i className="ri-arrow-down-s-fill align-middle me-1"></i>
-                                              4.80 %<span> </span>
-                                            </span>
                                           </div>
                                         </div>
                                       </div>
@@ -667,7 +671,7 @@ const handleProposalsCheckboxChange = (id) => {
                                 >
                                   <table
                                     id="tbl_invoices"
-                                    className="table table-borderedless dt-responsive nowrap table-striped align-middle w-full "
+                                    className="table table-borderedless dt-responsive nowrap table-striped align-middle w-full fadeIn"
                                   >
                                     <thead>
                                       <tr className="bg-light">
@@ -709,7 +713,22 @@ const handleProposalsCheckboxChange = (id) => {
                                                 setShowInvoice(true);
                                               }}
                                             >
-                                              {inv?.prefix}-{inv?.number}
+                                              {inv?.prefix}-
+                                              {inv?.number
+                                                ?.toString()
+                                                .padStart(5, "0") +
+                                                "/" +
+                                                (
+                                                  new Date(
+                                                    inv?.date
+                                                  ).getMonth() + 1
+                                                )
+                                                  ?.toString()
+                                                  ?.padStart(2, "0") +
+                                                "/" +
+                                                new Date(
+                                                  inv?.date
+                                                ).getFullYear()}
                                             </td>
                                             <td className=" text-start">
                                               ₹{inv?.total}
@@ -730,8 +749,28 @@ const handleProposalsCheckboxChange = (id) => {
                                               </span>
                                             </td>
                                             <td className="text-start">
-                                              <span className="badge badge-outline-danger">
-                                                {inv?.status}
+                                              <span
+                                                className={`badge badge-soft-${
+                                                  inv?.status == 1
+                                                    ? "primary"
+                                                    : inv?.status == 2
+                                                    ? "success"
+                                                    : inv?.status == 3
+                                                    ? "secondary"
+                                                    : inv?.status == 4
+                                                    ? "warning"
+                                                    : "danger"
+                                                } fs-11`}
+                                              >
+                                                {inv?.status == 1
+                                                  ? "Unpaid"
+                                                  : inv?.status == 2
+                                                  ? "Paid"
+                                                  : inv?.status == 3
+                                                  ? "Partially Paid"
+                                                  : inv?.status == 4
+                                                  ? "Overdue"
+                                                  : "Cancelled"}
                                               </span>
                                             </td>
                                           </tr>
@@ -762,6 +801,7 @@ const handleProposalsCheckboxChange = (id) => {
                       <PaymentsTable
                         customerData={customerData}
                         currentTab={currentTab}
+                        handleShowInvoice={handleShowInvoice}
                       />
                     )}
                     {/* <!--end tab-pane--> */}
@@ -815,6 +855,43 @@ const handleProposalsCheckboxChange = (id) => {
                               )}
                             </div>
                             {!toggleCreateProposal && (
+                              <div className="flex flex-wrap justify-start gap-4 my-2 items-center">
+                                <button
+                                  type="button"
+                                  className={`btn ${
+                                    activeProposalTab === 2
+                                      ? " bg-success text-white"
+                                      : "btn-outline-success"
+                                  }`}
+                                  onClick={() => setActiveProposalTab(2)}
+                                >
+                                  Accepted Proposals
+                                </button>
+                                <button
+                                  type="button"
+                                  className={`btn ${
+                                    activeProposalTab === 1
+                                      ? " bg-secondary text-white"
+                                      : "btn-outline-secondary"
+                                  }`}
+                                  onClick={() => setActiveProposalTab(1)}
+                                >
+                                  Pending Proposals
+                                </button>
+                                <button
+                                  type="button"
+                                  className={`btn ${
+                                    activeProposalTab === 3
+                                      ? " bg-danger text-white"
+                                      : "btn-outline-danger"
+                                  }`}
+                                  onClick={() => setActiveProposalTab(3)}
+                                >
+                                  Rejected Proposals
+                                </button>
+                              </div>
+                            )}
+                            {!toggleCreateProposal && (
                               <div className="proposals-table">
                                 <SimpleBar
                                   className=" p-3 h-[400px]"
@@ -823,7 +900,7 @@ const handleProposalsCheckboxChange = (id) => {
                                 >
                                   <table
                                     id="tbl_proposals"
-                                    className="table table-borderedless dt-responsive nowrap table-striped align-middle w-full"
+                                    className="table table-borderedless dt-responsive nowrap table-striped align-middle w-full fadeIn"
                                   >
                                     <thead>
                                       <tr className="bg-light">
@@ -839,75 +916,114 @@ const handleProposalsCheckboxChange = (id) => {
                                     </thead>
                                     <tbody>
                                       {customerData?.data?.res_data?.proposals?.map(
-                                        (proposal, ind) => (
-                                          <tr key={ind}>
-                                            <td>
-                                              <div className="">
-                                                <input
-                                                  className="form-check-input code-switcher"
-                                                  type="checkbox"
-                                                  checked={proposalsCheckedIds.includes(
-                                                    proposal.id?.toString()
-                                                  )}
-                                                  onChange={() =>
-                                                    handleProposalsCheckboxChange(
-                                                      proposal.id?.toString()
+                                        (proposal, ind) => {
+                                          if (
+                                            proposal?.status ==
+                                            activeProposalTab
+                                          ) {
+                                            return (
+                                              <tr key={ind}>
+                                                <td>
+                                                  <div className="">
+                                                    <input
+                                                      className="form-check-input code-switcher"
+                                                      type="checkbox"
+                                                      checked={proposalsCheckedIds.includes(
+                                                        proposal.id?.toString()
+                                                      )}
+                                                      onChange={() =>
+                                                        handleProposalsCheckboxChange(
+                                                          proposal.id?.toString()
+                                                        )
+                                                      }
+                                                    />
+                                                  </div>
+                                                </td>
+                                                <td
+                                                  className="text-info text-start cursor-pointer"
+                                                  onClick={() => {
+                                                    setProposalId(proposal?.id);
+                                                    setShowProposal(true);
+                                                  }}
+                                                >
+                                                  PRO-
+                                                  {proposal?.id
+                                                    ?.toString()
+                                                    .padStart(5, "0") +
+                                                    "/" +
+                                                    (
+                                                      new Date(
+                                                        proposal?.date
+                                                      ).getMonth() + 1
                                                     )
-                                                  }
-                                                />
-                                              </div>
-                                            </td>
-                                            <td
-                                              className="text-info text-start cursor-pointer" 
-                                              onClick={() => {
-                                                setProposalId(proposal?.number);
-                                                setShowProposal(true);
-                                              }}
-                                            >
-                                              PRO-{proposal?.number}
-                                            </td>
-                                            <td className="text-start">
-                                              Test subject
-                                            </td>
-                                            <td className="text-primary text-start">
-                                              ₹{proposal?.total}
-                                            </td>
-                                            <td>
-                                              <span className="badge badge-soft-info fs-12">
-                                                {proposal?.date}
-                                              </span>
-                                            </td>
-                                            <td>
-                                              <span className="badge badge-soft-primary fs-12">
-                                                {proposal?.duedate}
-                                              </span>
-                                            </td>
-                                            <td>
-                                              <span className="badge badge-soft-success fs-12">
-                                                {new Date(
-                                                  proposal?.created_at
-                                                ).toLocaleDateString()}
-                                              </span>
-                                            </td>
-                                            <td>
-                                              <span
-                                                className={`badge ${
-                                                  proposal?.status == 1
-                                                    ? "badge-outline-secondary"
-                                                    : proposal?.status == 2
-                                                    ? "badge-outline-success"
-                                                    : "badge-outline-danger"
-                                                }`}
-                                              >
-                                                {proposal?.status == 1
-                                                  ? "Pending"
-                                                  : proposal?.status == 2
-                                                  ? "Accepted"
-                                                  : "Declined"}
-                                              </span>
-                                            </td>
-                                          </tr>
-                                        )
+                                                      ?.toString()
+                                                      ?.padStart(2, "0") +
+                                                    "/" +
+                                                    new Date(
+                                                      proposal?.date
+                                                    ).getFullYear()}
+                                                </td>
+                                                <td className="text-start">
+                                                  Test subject
+                                                </td>
+                                                <td className="text-primary text-start">
+                                                  ₹{proposal?.total}
+                                                </td>
+                                                <td>
+                                                  <span className="badge badge-soft-info fs-12">
+                                                    {proposal?.date}
+                                                  </span>
+                                                </td>
+                                                <td>
+                                                  <span className="badge badge-soft-primary fs-12">
+                                                    {proposal?.duedate}
+                                                  </span>
+                                                </td>
+                                                <td>
+                                                  <span className="badge badge-soft-success fs-12">
+                                                    {new Date(
+                                                      proposal?.created_at
+                                                    ).toLocaleDateString()}
+                                                  </span>
+                                                </td>
+                                                <td>
+                                                  <span
+                                                    className={`badge ${
+                                                      proposal?.status == 1
+                                                        ? "badge-outline-secondary"
+                                                        : proposal?.status == 2
+                                                        ? "badge-outline-success"
+                                                        : "badge-outline-danger"
+                                                    }`}
+                                                  >
+                                                    {proposal?.status == 1
+                                                      ? "Pending"
+                                                      : proposal?.status == 2
+                                                      ? "Accepted"
+                                                      : "Declined"}
+                                                  </span>
+                                                </td>
+                                              </tr>
+                                            );
+                                          } else {
+                                            return (
+                                              customerData?.data?.res_data?.proposals?.filter(
+                                                (proposal) =>
+                                                  proposal?.status ==
+                                                  activeProposalTab
+                                              )?.length == 0 &&
+                                              ind == 0 && (
+                                                <tr key={ind}>
+                                                  <td colSpan={8}>
+                                                    <p className="text-center w-full text-lg">
+                                                      No data found
+                                                    </p>
+                                                  </td>
+                                                </tr>
+                                              )
+                                            );
+                                          }
+                                        }
                                       )}
                                       {customerData?.data?.res_data?.proposals
                                         ?.length == 0 && (
@@ -933,7 +1049,7 @@ const handleProposalsCheckboxChange = (id) => {
                                 <div className="row">
                                   <div className="col-lg-12">
                                     <img
-                                      src="assets/images/ccp_logo.webp"
+                                      src="/assets/images/ccp_logo.webp"
                                       className="card-logo card-logo-dark user-profile-image img-fluid m-auto"
                                       alt="logo dark"
                                     />
@@ -2084,7 +2200,7 @@ const handleProposalsCheckboxChange = (id) => {
         <ProposalModal
           show={showProposal}
           hide={hideProposal}
-          invId={proposalId}
+          proposalId={proposalId}
         />
       )}
     </>

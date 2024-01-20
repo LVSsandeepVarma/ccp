@@ -591,7 +591,7 @@ export default function Dashboard(){
                               <tr>
                                 <td className="d-flex">
                                   <img
-                                    src="assets/images/users/avatar-1.jpg"
+                                    src="/assets/images/users/avatar-1.jpg"
                                     alt=""
                                     className="avatar-xs rounded-3 me-2"
                                   />
@@ -621,7 +621,7 @@ export default function Dashboard(){
                               <tr>
                                 <td className="d-flex">
                                   <img
-                                    src="assets/images/users/avatar-2.jpg"
+                                    src="/assets/images/users/avatar-2.jpg"
                                     alt=""
                                     className="avatar-xs rounded-3 me-2"
                                   />
@@ -649,7 +649,7 @@ export default function Dashboard(){
                               <tr>
                                 <td className="d-flex">
                                   <img
-                                    src="assets/images/users/avatar-7.jpg"
+                                    src="/assets/images/users/avatar-7.jpg"
                                     alt=""
                                     className="avatar-xs rounded-3 me-2"
                                   />
@@ -679,7 +679,7 @@ export default function Dashboard(){
                               <tr>
                                 <td className="d-flex">
                                   <img
-                                    src="assets/images/users/avatar-4.jpg"
+                                    src="/assets/images/users/avatar-4.jpg"
                                     alt=""
                                     className="avatar-xs rounded-3 me-2"
                                   />
@@ -709,7 +709,7 @@ export default function Dashboard(){
                               <tr>
                                 <td className="d-flex">
                                   <img
-                                    src="assets/images/users/avatar-6.jpg"
+                                    src="/assets/images/users/avatar-6.jpg"
                                     alt=""
                                     className="avatar-xs rounded-3 me-2"
                                   />
@@ -739,7 +739,7 @@ export default function Dashboard(){
                               <tr>
                                 <td className="d-flex">
                                   <img
-                                    src="assets/images/users/avatar-5.jpg"
+                                    src="/assets/images/users/avatar-5.jpg"
                                     alt=""
                                     className="avatar-xs rounded-3 me-2"
                                   />
@@ -767,7 +767,7 @@ export default function Dashboard(){
                               <tr>
                                 <td className="d-flex">
                                   <img
-                                    src="assets/images/users/avatar-3.jpg"
+                                    src="/assets/images/users/avatar-3.jpg"
                                     alt=""
                                     className="avatar-xs rounded-3 me-2"
                                   />
@@ -828,7 +828,7 @@ export default function Dashboard(){
                                 <div className="conversation-list align-items-start">
                                   <div className="chat-avatar">
                                     <img
-                                      src="assets/images/users/avatar-2.jpg"
+                                      src="/assets/images/users/avatar-2.jpg"
                                       alt=""
                                     />
                                   </div>
@@ -853,7 +853,7 @@ export default function Dashboard(){
                                 <div className="conversation-list align-items-start">
                                   <div className="chat-avatar">
                                     <img
-                                      src="assets/images/users/avatar-2.jpg"
+                                      src="/assets/images/users/avatar-2.jpg"
                                       alt=""
                                     />
                                   </div>
@@ -878,7 +878,7 @@ export default function Dashboard(){
                                 <div className="conversation-list align-items-start">
                                   <div className="chat-avatar">
                                     <img
-                                      src="assets/images/users/avatar-2.jpg"
+                                      src="/assets/images/users/avatar-2.jpg"
                                       alt=""
                                     />
                                   </div>
@@ -903,7 +903,7 @@ export default function Dashboard(){
                                 <div className="conversation-list align-items-start">
                                   <div className="chat-avatar">
                                     <img
-                                      src="assets/images/users/avatar-2.jpg"
+                                      src="/assets/images/users/avatar-2.jpg"
                                       alt=""
                                     />
                                   </div>
@@ -928,7 +928,7 @@ export default function Dashboard(){
                                 <div className="conversation-list align-items-start">
                                   <div className="chat-avatar">
                                     <img
-                                      src="assets/images/users/avatar-2.jpg"
+                                      src="/assets/images/users/avatar-2.jpg"
                                       alt=""
                                     />
                                   </div>
@@ -953,7 +953,7 @@ export default function Dashboard(){
                                 <div className="conversation-list align-items-start">
                                   <div className="chat-avatar">
                                     <img
-                                      src="assets/images/users/avatar-2.jpg"
+                                      src="/assets/images/users/avatar-2.jpg"
                                       alt=""
                                     />
                                   </div>

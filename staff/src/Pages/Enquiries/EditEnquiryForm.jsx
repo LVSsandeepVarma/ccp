@@ -141,7 +141,7 @@ export default function EditEnquiry({ info, handleClose }) {
     const fetchCSC = async (value) => {
       try {
         const response = await axios.post(
-          "https://controller.callcentreproject.com/bdo-api/get-postal-code",
+          "https://controller.connetz.shop/bdo-api/get-postal-code",
           { zip: value },
           {
             headers: {

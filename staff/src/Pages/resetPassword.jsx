@@ -4,12 +4,17 @@ import { loadAll } from "@tsparticles/all";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux"
+import { hideLoader, showLoader } from "../reducers/loader";
+import TableLoader from "./TableLoader";
 
 //
 
 /* eslint-disable react/no-unknown-property */
 export default function ResetPassword() {
   const params = useParams();
+  const dispatch = useDispatch()
+  const loaderState = useSelector((state) => state.loader?.value);
   const [apiErr, setApiErr] = useState("");
   const [toggleConfirmPassword, settoggleConfirmPassword] = useState(false)
   const [togglePassword, settogglePassword] = useState(false);
@@ -115,9 +120,9 @@ export default function ResetPassword() {
     // Handle form submission here
     console.log(data);
     try {
-      
+      dispatch(showLoader())
       const response = await axios.post(
-        "https://controller.callcentreproject.com/bdo-api/reset/password",
+        "https://controller.connetz.shop/bdo-api/reset/password",
         {
           password: data.Password,
           confirm_password: data.ConfirmPassword,
@@ -138,11 +143,14 @@ export default function ResetPassword() {
         // err?.response?.data?.errors?.confirm_password[0]
       }
       setApiErr(err?.response?.data?.message);
+    } finally {
+      dispatch(hideLoader())
     }
   };
 
   return (
     <>
+      {loaderState && <TableLoader/>}
       <div className="auth-page-wrapper pt-5">
         {/* <!--  auth page bg --> */}
         <div className="auth-one-bg-position auth-one-bg">

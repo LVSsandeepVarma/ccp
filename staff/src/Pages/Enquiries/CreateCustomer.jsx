@@ -29,6 +29,7 @@ export default function CreateCustomer({ id,type, onHide }) {
         handleSubmit,
         setError,
         setValue,
+        trigger,
         watch,
         formState: { errors },
       } = useForm({
@@ -130,7 +131,7 @@ export default function CreateCustomer({ id,type, onHide }) {
       const fetchCSC = async (value) => {
         try {
           const response = await axios.post(
-            "https://controller.callcentreproject.com/bdo-api/get-postal-code",
+            "https://controller.connetz.shop/bdo-api/get-postal-code",
             { zip: value },
             {
               headers: {
@@ -145,6 +146,9 @@ export default function CreateCustomer({ id,type, onHide }) {
             setValue("city", response?.data?.data?.postal_data?.taluq);
             setValue("state", response?.data?.data?.postal_data?.state);
             setValue("country", response?.data?.data?.postal_data?.country);
+            trigger("city")
+            trigger("state")
+              trigger("country")
           }
         } catch (err) {
           console.log(err);

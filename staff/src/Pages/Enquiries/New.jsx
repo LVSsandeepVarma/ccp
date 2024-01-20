@@ -30,6 +30,7 @@ export default function NewEnquiries() {
       handleSubmit,
       setError,
       setValue,
+      trigger,
       watch,
       formState: { errors },
     } = useForm({
@@ -131,7 +132,7 @@ export default function NewEnquiries() {
       const fetchCSC = async (value) => {
         try {
           const response = await axios.post(
-            "https://controller.callcentreproject.com/bdo-api/get-postal-code",
+            "https://controller.connetz.shop/bdo-api/get-postal-code",
             { zip: value },
             {
               headers: {
@@ -145,6 +146,8 @@ export default function NewEnquiries() {
           if (response) {
             setValue("city", response?.data?.data?.postal_data?.taluq);
             setValue("state", response?.data?.data?.postal_data?.state);
+            trigger("state")
+            trigger("city")
             // setValue("country", response?.data?.data?.postal_data?.country);
           }
         } catch (err) {

@@ -5,10 +5,11 @@ import {  useUpdateProfileAddressMutation } from "../../services/api";
 import Loader from "../Loader";
 import axios from  "axios"
 
-export default function AddressForm({ userInfo }) {
+export default function AddressForm({ userInfo, id }) {
   const [apiErr, setApiErr] = useState("");
   const [customerInfo, setCustomerInfo] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
+
   console.log(userInfo);
   const {
     // eslint-disable-next-line no-unused-vars
@@ -16,6 +17,7 @@ export default function AddressForm({ userInfo }) {
     handleSubmit,
     setError,
     reset,
+    trigger,
     setValue,
     watch,
     formState: { errors },
@@ -36,7 +38,7 @@ export default function AddressForm({ userInfo }) {
 
   useEffect(() => {
     const values = {
-      id: userInfo?.id ? userInfo?.id : "",
+      id: userInfo?.id ? userInfo?.id : id,
       billing_city: userInfo?.billing_city ? userInfo?.billing_city : "",
       billing_state: userInfo?.billing_state ? userInfo?.billing_state : "",
       billing_country: userInfo?.billing_country
@@ -61,6 +63,9 @@ export default function AddressForm({ userInfo }) {
       value: 1,
       label: "INR (₹)",
     });
+    trigger("currency")
+    setValue("id", id)
+    trigger("id")
     setCustomerInfo(values);
     reset(values);
   }, [userInfo]);
@@ -147,7 +152,7 @@ export default function AddressForm({ userInfo }) {
   const fetchCSC = async (value, fieldName) => {
     try { 
       const response = await axios.post(
-        "https://controller.callcentreproject.com/bdo-api/get-postal-code", { zip: value }, {
+        "https://controller.connetz.shop/bdo-api/get-postal-code", { zip: value }, {
           headers: {
           Authorization: `Bearer ${localStorage.getItem('staff_auth_token')}`,
         }}
@@ -159,6 +164,9 @@ export default function AddressForm({ userInfo }) {
           setValue("shipping_city", response?.data?.data?.postal_data?.taluq)
           setValue("shipping_state", response?.data?.data?.postal_data?.state);
           setValue("shipping_country", response?.data?.data?.postal_data?.country);
+          trigger("shipping_city");
+          trigger("shipping_state");
+          trigger("shipping_country");
         } else {
           setValue("billing_city", response?.data?.data?.postal_data?.taluq);
           setValue("billing_state", response?.data?.data?.postal_data?.state);
@@ -166,7 +174,11 @@ export default function AddressForm({ userInfo }) {
             "billing_country",
             response?.data?.data?.postal_data?.country
           );
+          trigger("billing_city");
+          trigger("billing_state");
+          trigger("billing_country");
         }
+        
       }
     }
     catch (err) {
@@ -178,20 +190,20 @@ export default function AddressForm({ userInfo }) {
   //   // Check if there are no validation errors
     
   // };
-  useEffect(() => {
-    console.log(billingZip, errors.billing_zip, "billingZip");
-    if (billingZip?.length == 6) {
-    console.log(billingZip, "billingzip");
-    fetchCSC(billingZip, "billing");
-    }
-  }, [billingZip])
+  // useEffect(() => {
+  //   console.log(billingZip, errors.billing_zip, "billingZip");
+  //   if (billingZip?.length == 6) {
+  //   console.log(billingZip, "billingzip");
+  //   fetchCSC(billingZip, "billing");
+  //   }
+  // }, [billingZip])
   
-    useEffect(() => {
-      if (shippingZip?.length == 6) {
-        console.log(shippingZip, "shippingzip");
-        fetchCSC(shippingZip, "shipping");
-      }
-    }, [shippingZip]);
+  //   useEffect(() => {
+  //     if (shippingZip?.length == 6) {
+  //       console.log(shippingZip, "shippingzip");
+  //       fetchCSC(shippingZip, "shipping");
+  //     }
+  //   }, [shippingZip]);
 
 
   return (
@@ -202,9 +214,9 @@ export default function AddressForm({ userInfo }) {
           <div className="col-lg-6">
             <div className="d-flex align-items-center justify-content-between border-bottom pb-2">
               <h4 className="mb-0 text-2xl font-bold">Billing Address</h4>
-              <span className="text-muted cursor-pointer">
+              {/* <span className="text-muted cursor-pointer">
                 Same as Customer Info
-              </span>
+              </span> */}
             </div>
             <div className="mt-3">
               <label htmlFor="placeholderInput" className="form-label">
@@ -242,6 +254,9 @@ export default function AddressForm({ userInfo }) {
                   required: true,
                   minLength: 6,
                   maxLength: 6,
+                  onBlur: () => {
+                    fetchCSC(billingZip, "billing");
+                  },
                   message: "Billing Zip code is required",
                 })}
               />
@@ -369,8 +384,11 @@ export default function AddressForm({ userInfo }) {
                 {...register("shipping_zip", {
                   required: true,
                   message: "Shipping Zip code is required",
+                  onBlur: () => {
+                    fetchCSC(shippingZip, "shipping");
+                  },
                   minLength: 6,
-                  maxLength:6
+                  maxLength: 6,
                 })}
               />
               {

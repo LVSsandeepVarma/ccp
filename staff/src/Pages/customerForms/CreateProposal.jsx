@@ -2,12 +2,14 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import Flatpickr from "react-flatpickr";
-import {  useCreateProposalMutation, useProductsQuery } from "../../services/api";
+import {  useCreateProposalMutation, useProductsQuery, useSendProposalMutation } from "../../services/api";
 import Loader from "../Loader";
 import Select from "react-select";
+import TableLoader from "../TableLoader";
 
 export default function CreateProposal({ customer, close }) {
   console.log(customer);
+    const [apiErr, setApiErr] = useState();
   const [items, setItems] = useState([
     {
       id: 1,
@@ -19,6 +21,8 @@ export default function CreateProposal({ customer, close }) {
       seater: "",
     },
   ]);
+    const [taxNo, setTaxNo] = useState("");
+    const [mailSent, setMailSent] = useState(false);
   const [subTotal, setSubTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [tax, setTax] = useState(0);
@@ -27,8 +31,14 @@ export default function CreateProposal({ customer, close }) {
   const [discountErr, setDiscountErr] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [successMsg, setSuccessMsg] = useState("");
+  const [taxNumberErr, setTaxNumberErr] = useState("")
+
   const { data: productsData, isLoading } = useProductsQuery();
   console.log(productsData);
+
+    useEffect(() => {
+      setTaxNo(customer?.gst_no);
+    }, []);
 
   useEffect(() => {
     if (successMsg) {
@@ -37,7 +47,13 @@ export default function CreateProposal({ customer, close }) {
         close();
       }, 2000);
     }
-  }, [successMsg]);
+    if (apiErr) {
+      setTimeout(() => {
+        setApiErr("");
+        close();
+      }, 2000);
+    }
+  }, [successMsg, apiErr]);
   useEffect(() => {
     if (discount > 15) {
       setDiscountErr("max 15% is allowed");
@@ -158,7 +174,7 @@ export default function CreateProposal({ customer, close }) {
     }
   };
 
-  const [sendProposal, { data: proposalData, isLoading: loading }] =
+  const [createProposal, { data: proposalData, isLoading: loading }] =
     useCreateProposalMutation();
 
   const handleSubmit = async (e) => {
@@ -190,11 +206,22 @@ export default function CreateProposal({ customer, close }) {
     proposalData["customer_id"] = customer?.id;
     proposalData["date"] = `${date}`;
     proposalData["tax_amount"] = tax;
+    proposalData["mail_send"] = mailSent;
+    proposalData["tax_number"] = 9999999999;
 
-    const response = await sendProposal({ ...proposalData });
+    const response = await createProposal({ ...proposalData });
     console.log(response, "response");
     if (response?.data?.status) {
       setSuccessMsg(response?.data?.message);
+      
+    } else {
+      console.log(response)
+      if (response?.error?.data?.errors) {
+        setTaxNumberErr(response?.error?.data?.errors["tax_number"]);
+
+      } else {
+        setApiErr(response?.error?.data?.message)
+      }
     }
   };
 
@@ -230,9 +257,11 @@ export default function CreateProposal({ customer, close }) {
     return setDate(isoDate);
   }
 
+
+
   return (
     <>
-      {isLoading && <Loader />}
+      {isLoading || (loading && <TableLoader />)}
       <form
         className="needs-validation"
         noValidate
@@ -284,7 +313,7 @@ export default function CreateProposal({ customer, close }) {
           </div>
           <div className="card-body p-4">
             <div className="row g-3">
-              <div className="col-lg-3 col-sm-6">
+              <div className="col-lg-3 col-sm-6 hidden">
                 <label htmlFor="proposalnoInput">proposal No</label>
                 <input
                   type="text"
@@ -353,7 +382,7 @@ export default function CreateProposal({ customer, close }) {
                   className="form-control bg-light border-0"
                   id="billingName"
                   placeholder="Full Name"
-                  value="Mohamed Momin"
+                  value={customer?.first_name}
                   readOnly
                   required
                 />
@@ -368,7 +397,7 @@ export default function CreateProposal({ customer, close }) {
                   className="form-control bg-light border-0"
                   data-plugin="cleave-phone"
                   id="billingPhoneno"
-                  placeholder="(123)456-7890"
+                  placeholder={customer?.phone}
                   // value="+91 90361 83631"
                   // readOnly
                   required
@@ -387,10 +416,12 @@ export default function CreateProposal({ customer, close }) {
                   id="billingTaxno"
                   placeholder="Tax Number"
                   required
+                  defaultValue={taxNo}
+                  onChange={(e) => setTaxNo(e?.target?.value)}
                 />
-                <div className="invalid-feedback">
-                  Please enter a tax number
-                </div>
+                {taxNumberErr && (
+                  <div className="text-red-600 p-0 m-0">{taxNumberErr}</div>
+                )}
               </div>
             </div>
             {/* <!--end col--> */}
@@ -697,11 +728,11 @@ export default function CreateProposal({ customer, close }) {
               rows="2"
               required
             >
-              All accounts are to be paid within 7 days from receipt of proposal.
-              To be paid by cheque or credit card or direct payment online. If
-              account is not paid within 7 days the credits details supplied as
-              confirmation of work undertaken will be charged the agreed quoted
-              fee noted above.
+              All accounts are to be paid within 7 days from receipt of
+              proposal. To be paid by cheque or credit card or direct payment
+              online. If account is not paid within 7 days the credits details
+              supplied as confirmation of work undertaken will be charged the
+              agreed quoted fee noted above.
             </textarea>
           </div>
           <div className="flex justify-between items-center">
@@ -722,12 +753,25 @@ export default function CreateProposal({ customer, close }) {
               <i className="ri-download-2-line align-bottom me-1"></i> Download
               proposal
             </button> */}
+
+              <button
+                disabled={discountErr != "" ? true : false}
+                className="btn btn-info bg-info"
+                onClick={(e) => {
+                  setMailSent(true);
+                  handleSubmit(e);
+                }}
+              >
+                <i className="ri-send-plane-fill align-bottom me-1"></i>Save &
+                Create Proposal
+              </button>
+
               <button
                 disabled={discountErr != "" ? true : false}
                 className="btn btn-secondary bg-secondary"
                 onClick={handleSubmit}
               >
-                <i className="ri-send-plane-fill align-bottom me-1"></i> Send
+                <i className="ri-send-plane-fill align-bottom me-1"></i> Create
                 proposal
               </button>
             </div>

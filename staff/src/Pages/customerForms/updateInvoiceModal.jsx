@@ -83,7 +83,7 @@ export default function UpdateInvoiceModal({
 
   const handleDownlaodInvoice = async () => {
     const response = await axios.get(
-      `https://controller.callcentreproject.com/bdo-api/customers/invoices/download?id=${invId}`,
+      `https://controller.connetz.shop/bdo-api/customers/invoices/download?id=${invId}`,
       {
         responseType: "arraybuffer",
         headers: {

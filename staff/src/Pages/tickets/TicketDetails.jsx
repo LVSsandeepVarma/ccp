@@ -35,7 +35,7 @@ app.appendChild(Wrapper.generate("button", "Load").click(() => run({
                                 <div className="avatar-md mb-md-0 mb-4">
                                   <div className="avatar-title bg-white rounded-circle">
                                     <img
-                                      src="assets/images/companies/img-4.png"
+                                      src="/assets/images/companies/img-4.png"
                                       alt=""
                                       className="avatar-sm"
                                     />
@@ -206,7 +206,7 @@ app.appendChild(Wrapper.generate("button", "Load").click(() => run({
                         <div className="d-flex mb-4">
                           <div className="flex-shrink-0">
                             <img
-                              src="assets/images/users/avatar-8.jpg"
+                              src="/assets/images/users/avatar-8.jpg"
                               alt=""
                               className="avatar-xs rounded-circle"
                             />
@@ -231,7 +231,7 @@ app.appendChild(Wrapper.generate("button", "Load").click(() => run({
                             <div className="d-flex mt-4">
                               <div className="flex-shrink-0">
                                 <img
-                                  src="assets/images/users/avatar-10.jpg"
+                                  src="/assets/images/users/avatar-10.jpg"
                                   alt=""
                                   className="avatar-xs rounded-circle"
                                 />
@@ -261,7 +261,7 @@ app.appendChild(Wrapper.generate("button", "Load").click(() => run({
                         <div className="d-flex mb-4">
                           <div className="flex-shrink-0">
                             <img
-                              src="assets/images/users/avatar-6.jpg"
+                              src="/assets/images/users/avatar-6.jpg"
                               alt=""
                               className="avatar-xs rounded-circle"
                             />
@@ -295,7 +295,7 @@ app.appendChild(Wrapper.generate("button", "Load").click(() => run({
                         <div className="d-flex">
                           <div className="flex-shrink-0">
                             <img
-                              src="assets/images/users/avatar-10.jpg"
+                              src="/assets/images/users/avatar-10.jpg"
                               alt=""
                               className="avatar-xs rounded-circle"
                             />
@@ -321,14 +321,14 @@ app.appendChild(Wrapper.generate("button", "Load").click(() => run({
                             <div className="row g-2 mb-3">
                               <div className="col-lg-1 col-sm-2 col-6">
                                 <img
-                                  src="assets/images/small/img-4.jpg"
+                                  src="/assets/images/small/img-4.jpg"
                                   alt=""
                                   className="img-fluid rounded"
                                 />
                               </div>
                               <div className="col-lg-1 col-sm-2 col-6">
                                 <img
-                                  src="assets/images/small/img-5.jpg"
+                                  src="/assets/images/small/img-5.jpg"
                                   alt=""
                                   className="img-fluid rounded"
                                 />
@@ -343,7 +343,7 @@ app.appendChild(Wrapper.generate("button", "Load").click(() => run({
                             <div className="d-flex mt-4">
                               <div className="flex-shrink-0">
                                 <img
-                                  src="assets/images/users/avatar-6.jpg"
+                                  src="/assets/images/users/avatar-6.jpg"
                                   alt=""
                                   className="avatar-xs rounded-circle"
                                 />
@@ -439,7 +439,7 @@ app.appendChild(Wrapper.generate("button", "Load").click(() => run({
                                     data-bs-original-title="Erica Kernan"
                                   >
                                     <img
-                                      src="assets/images/users/avatar-4.jpg"
+                                      src="/assets/images/users/avatar-4.jpg"
                                       alt=""
                                       className="rounded-circle avatar-xs"
                                     />
@@ -453,7 +453,7 @@ app.appendChild(Wrapper.generate("button", "Load").click(() => run({
                                     data-bs-original-title="Alexis Clarke"
                                   >
                                     <img
-                                      src="assets/images/users/avatar-10.jpg"
+                                      src="/assets/images/users/avatar-10.jpg"
                                       alt=""
                                       className="rounded-circle avatar-xs"
                                     />
@@ -467,7 +467,7 @@ app.appendChild(Wrapper.generate("button", "Load").click(() => run({
                                     data-bs-original-title="James Price"
                                   >
                                     <img
-                                      src="assets/images/users/avatar-3.jpg"
+                                      src="/assets/images/users/avatar-3.jpg"
                                       alt=""
                                       className="rounded-circle avatar-xs"
                                     />

@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { Modal } from "react-bootstrap";
 import SimpleBar from "simplebar-react"
-import {  useCreatePaymentMutation, useLazyPaymentModesQuery, useViewInvoiceQuery } from "../../services/api";
+import {  useCreatePaymentMutation, useLazyPaymentModesQuery, useSendInvoiceMutation, useViewInvoiceQuery } from "../../services/api";
 import Loader from "../Loader";
 import {  useEffect, useState } from "react";
 import Select from "react-select"
@@ -16,6 +16,8 @@ import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import FilePondPluginFileEncode from "filepond-plugin-file-encode";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+import TableLoader from "../TableLoader";
+import Swal from "sweetalert2";
 
 registerPlugin(
   FilePondPluginImagePreview,
@@ -24,6 +26,8 @@ registerPlugin(
   FilePondPluginFileEncode
   
 );
+
+
 
 
 // eslint-disable-next-line no-unused-vars
@@ -70,13 +74,26 @@ export default function InvoiceModal({ show, hide, invId }) {
   };
   console.log(invId);
 
+    const handleSuccessPayment = () => {
+      Swal.fire({
+        title: "Payment Recorded",
+        text: "Successfully recorded payment details for this invoice, it will be in pending payments until gets approval from finance team.",
+        icon: "success",
+        showCancelButton: !1,
+        confirmButtonText: "Ok",
+        confirmButtonColor: "btn btn-success  w-xs me-2 mt-2",
+        buttonsStyling: 1,
+        showCloseButton: !0,
+      });
+    };
+
 
   // const [invDownload] = useDownloadInvoiceMutation()
 
   const handleDownlaodInvoice = async () => {
     
     const response = await axios.get(
-      `https://controller.callcentreproject.com/bdo-api/customers/invoices/download?id=${invId}`,
+      `https://controller.connetz.shop/bdo-api/customers/invoices/download?id=${invId}`,
       {
         responseType: "arraybuffer",
         headers: {
@@ -164,6 +181,8 @@ export default function InvoiceModal({ show, hide, invId }) {
         console?.log(response, response?.data?.message);
         if (response?.data?.status) {
           setSuccessMsg(response?.data?.message);
+          handleSuccessPayment();
+          setPaymentFormToggle(!paymentFormToggle);
           localStorage.removeItem("editEnq");
           return;
         }
@@ -194,12 +213,24 @@ export default function InvoiceModal({ show, hide, invId }) {
       } catch (err) {
         console.log(err, "err");
       }
-    };
+  };
+  
+        const [sendInvoice, { data: invoiceRes, isLoading: invLoading }] =
+          useSendInvoiceMutation();
+
+        const handleSendInvoice = async () => {
+          const response = await sendInvoice({id:invId});
+          console.log(response, "response");
+          if (response?.data?.status) {
+            setSuccessMsg(response?.data?.message);
+            return;
+          }
+        };
   
   
   return (
     <>
-      {isLoading && <Loader />}
+      {isLoading || (invLoading && <TableLoader />)}
       <Modal
         className=""
         show={show}
@@ -209,29 +240,57 @@ export default function InvoiceModal({ show, hide, invId }) {
         size="lg"
       >
         <div className="modal-content">
-          <Modal.Header c>
-            <h5 className="modal-title" id="viewInvoiceLabel">
-              {data?.data?.invoice?.prefix}-{data?.data?.id}
-              {data?.data?.invoice?.status == 1 && (
-                <button
-                  type="button"
-                  className="btn btn-secondary bg-secondary mx-4"
-                  onClick={() => setPaymentFormToggle(!paymentFormToggle)}
-                >
-                  Make Payment
-                </button>
-              )}
-            </h5>
+          <Modal.Header>
+            <div className="flex justify-between items-center w-full gap-3">
+              <div className="flex justify-between items-center w-full">
+                <div>
+                  <h5 className="modal-title" id="viewInvoiceLabel">
+                    {data?.data?.invoice?.prefix}-
+                    {data?.data?.id?.toString().padStart(5, "0") +
+                      "/" +
+                      (new Date(data?.data?.invoice?.date).getMonth() + 1)
+                        ?.toString()
+                        ?.padStart(2, "0") +
+                      "/" +
+                      new Date(data?.data?.invoice?.date).getFullYear()}
+                    {data?.data?.invoice?.status == 1 && (
+                      <>
+                        <button
+                          type="button"
+                          className="btn btn-secondary bg-secondary mx-4"
+                          onClick={() =>
+                            setPaymentFormToggle(!paymentFormToggle)
+                          }
+                          disabled={
+                            parseInt(data?.data?.invoice?.payments_limit) ==
+                            parseInt(data?.data?.invoice?.payments_count)
+                          }
+                        >
+                          Make Payment
+                        </button>
+                      </>
+                    )}
+                  </h5>
+                  {parseInt(data?.data?.invoice?.payments_limit) == parseInt(data?.data?.invoice?.payments_count) &&  <small className="badge badge-soft-danger pulse text-sm mt-2 flex items-center gap-2 w-fit">
+                    <i className="ri-alert-line"></i>Payment limit reached
+                  </small>}
+                </div>
+                <div>
+                  <p className="text-gray-600 font-semibold">
+                    Payments limit :{" "}
+                    <b>{data?.data?.invoice?.payments_limit}</b>
+                  </p>
+                  <p className="text-gray-600 font-semibold">
+                    Payments count :{" "}
+                    <b>{data?.data?.invoice?.payments_count}</b>
+                  </p>
+                </div>
+              </div>
 
-            <button
-              type="button"
-              className="btn-close text-black text-2xl"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-              onClick={hide}
-            >
-              X
-            </button>
+              <p className="cursor-pointer  text-2xl " onClick={hide}>
+                X
+              </p>
+            </div>
           </Modal.Header>
           <SimpleBar className="max-h-[700px]">
             <Modal.Body className="">
@@ -241,11 +300,11 @@ export default function InvoiceModal({ show, hide, invId }) {
                     <>
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="row payment-details-row">
-                          <div className="col-lg-12 border-0 border-bottom border-dashed">
+                          {/* <div className="col-lg-12 border-0 border-bottom border-dashed">
                             <h5>
                               Record Payment for <b>INV-856965/01/2024</b>
                             </h5>
-                          </div>
+                          </div> */}
 
                           <div className="col-lg-6 mt-3">
                             <label
@@ -344,10 +403,6 @@ export default function InvoiceModal({ show, hide, invId }) {
                               data-select2-id="select2-data-39-vmv4"
                               tabIndex="-1"
                               aria-hidden="true"
-                              defaultValue={{
-                                label: "Offline",
-                                value: "Offline",
-                              }}
                               options={paymentModesData?.data?.payment_modes?.map(
                                 (prod) => ({
                                   value: prod?.id,
@@ -511,7 +566,21 @@ export default function InvoiceModal({ show, hide, invId }) {
                               </p>
                               <h5 className="fs-14 mb-0">
                                 #{data?.data?.invoice?.prefix}-
-                                <span id="invoice-no">{data?.data?.id}</span>
+                                <span id="invoice-no">
+                                  {data?.data?.id?.toString().padStart(5, "0") +
+                                    "/" +
+                                    (
+                                      new Date(
+                                        data?.data?.invoice?.date
+                                      ).getMonth() + 1
+                                    )
+                                      ?.toString()
+                                      ?.padStart(2, "0") +
+                                    "/" +
+                                    new Date(
+                                      data?.data?.invoice?.date
+                                    ).getFullYear()}
+                                </span>
                               </h5>
                             </div>
                             {/* <!--end col--> */}
@@ -531,10 +600,28 @@ export default function InvoiceModal({ show, hide, invId }) {
                                 Payment Status
                               </p>
                               <span
-                                className="badge badge-soft-success fs-11"
+                                className={`badge badge-soft-${
+                                  data?.data?.invocie?.status == 1
+                                    ? "primary"
+                                    : data?.data?.invoice?.status == 2
+                                    ? "success"
+                                    : data?.data?.invoice?.status == 3
+                                    ? "secondary"
+                                    : data?.data?.invoice?.status == 4
+                                    ? "warning"
+                                    : "danger"
+                                } fs-11`}
                                 id="payment-status"
                               >
-                                Paid
+                                {data?.data?.invoice?.status == 1
+                                  ? "Unpaid"
+                                  : data?.data?.invocie?.status == 2
+                                  ? "Paid"
+                                  : data?.data?.invoice?.status == 3
+                                  ? "Partially Paid"
+                                  : data?.data?.invoice?.status == 4
+                                  ? "Overdue"
+                                  : "Cancelled"}
                               </span>
                             </div>
                             {/* <!--end col--> */}
@@ -643,8 +730,13 @@ export default function InvoiceModal({ show, hide, invId }) {
                                         <span className="fw-medium font-bold">
                                           {item?.description}
                                         </span>
-                                        <p className="text-muted mb-0">
-                                          {item?.long_description}
+                                        <p
+                                          className="form-control bg-light border-0 whitespace-break-spaces line-clamp-5 motion-reduce:!transition-all hover:line-clamp-none py-1"
+                                          id="productDetails-1"
+                                          // rows="auto"
+                                          placeholder="Product Description "
+                                        >
+                                          {item?.description}
                                         </p>
                                       </td>
                                       <td>₹{item?.rate}</td>
@@ -746,6 +838,22 @@ export default function InvoiceModal({ show, hide, invId }) {
                                             />
                                           </td>
                                         </tr>
+                                        <tr className="border-top border-top-dashed">
+                                          <th scope="row">Pending Amount</th>
+                                          <td>
+                                            <input
+                                              type="text"
+                                              className="form-control bg-light border-0"
+                                              id="cart-total"
+                                              placeholder="₹0.00"
+                                              readOnly=""
+                                              value={`₹ ${parseFloat(
+                                                data?.data?.invoice
+                                                  ?.pending_amount
+                                              ).toFixed(2)}`}
+                                            />
+                                          </td>
+                                        </tr>
                                       </tbody>
                                     </table>
                                     {/* <!--end table--> */}
@@ -783,22 +891,35 @@ export default function InvoiceModal({ show, hide, invId }) {
             </Modal.Body>
           </SimpleBar>
           <Modal.Footer className="modal-footer">
-            <div className="hstack gap-2 justify-content-end d-print-none">
-              <button
-                className="btn btn-secondary"
-                onClick={() => {
-                  window.print(data?.data?.invoice?.pdf_link);
-                }}
-              >
-                <i className="ri-printer-line align-bottom me-1"></i> Print
-              </button>
-              <button
-                className="btn btn-primary bg-primary "
-                onClick={() => handleDownlaodInvoice()}
-              >
-                <i className="ri-download-2-line align-bottom me-1"></i>{" "}
-                Download
-              </button>
+            <div className="flex justify-between items-center w-full">
+              <div className="hstack gap-2 justify-content-end d-print-none ">
+                <p className="text-success text-start">{successMsg}</p>
+              </div>
+              <div className="hstack gap-2 justify-content-end d-print-none">
+                <button
+                  className="btn btn-info bg-info"
+                  onClick={() => handleSendInvoice()}
+                >
+                  <i className="ri-send-plane-fill align-bottom me-1"></i> Send
+                  Invoice
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    window.location.href = data?.data?.invoice?.pdf_link;
+                    // window.print(data?.data?.invoice?.pdf_link);
+                  }}
+                >
+                  <i className="ri-printer-line align-bottom me-1"></i> Print
+                </button>
+                <button
+                  className="btn btn-primary bg-primary "
+                  onClick={() => handleDownlaodInvoice()}
+                >
+                  <i className="ri-download-2-line align-bottom me-1"></i>{" "}
+                  Download
+                </button>
+              </div>
             </div>
           </Modal.Footer>
         </div>

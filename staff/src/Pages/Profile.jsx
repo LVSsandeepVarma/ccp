@@ -13,7 +13,7 @@ export default function Profile() {
             <div className="profile-foreground position-relative mx-n4 mt-n4">
               <div className="profile-wid-bg">
                 <img
-                  src="assets/images/profile-bg.jpg"
+                  src="/assets/images/profile-bg.jpg"
                   alt=""
                   className="profile-wid-img"
                 />
@@ -24,7 +24,7 @@ export default function Profile() {
                 <div className="col-auto">
                   <div className="avatar-lg">
                     <img
-                      src="assets/images/users/avatar-1.jpg"
+                      src="/assets/images/users/avatar-1.jpg"
                       alt="user-img"
                       className="img-thumbnail rounded-circle"
                     />
@@ -490,7 +490,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-1.jpg"
+                                                src="/assets/images/users/avatar-1.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -499,7 +499,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-3.jpg"
+                                                src="/assets/images/users/avatar-3.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -559,7 +559,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-8.jpg"
+                                                src="/assets/images/users/avatar-8.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -568,7 +568,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-7.jpg"
+                                                src="/assets/images/users/avatar-7.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -577,7 +577,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-6.jpg"
+                                                src="/assets/images/users/avatar-6.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -637,7 +637,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-4.jpg"
+                                                src="/assets/images/users/avatar-4.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -653,7 +653,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-3.jpg"
+                                                src="/assets/images/users/avatar-3.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -705,7 +705,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-7.jpg"
+                                                src="/assets/images/users/avatar-7.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -714,7 +714,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-5.jpg"
+                                                src="/assets/images/users/avatar-5.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -766,7 +766,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-7.jpg"
+                                                src="/assets/images/users/avatar-7.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -775,7 +775,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-6.jpg"
+                                                src="/assets/images/users/avatar-6.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -841,7 +841,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-3.jpg"
+                                                src="/assets/images/users/avatar-3.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -850,7 +850,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-8.jpg"
+                                                src="/assets/images/users/avatar-8.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -902,7 +902,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-6.jpg"
+                                                src="/assets/images/users/avatar-6.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -911,7 +911,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-5.jpg"
+                                                src="/assets/images/users/avatar-5.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -920,7 +920,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-4.jpg"
+                                                src="/assets/images/users/avatar-4.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -973,7 +973,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-1.jpg"
+                                                src="/assets/images/users/avatar-1.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -1025,7 +1025,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-2.jpg"
+                                                src="/assets/images/users/avatar-2.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -1034,7 +1034,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-3.jpg"
+                                                src="/assets/images/users/avatar-3.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -1043,7 +1043,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-4.jpg"
+                                                src="/assets/images/users/avatar-4.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -1102,7 +1102,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-7.jpg"
+                                                src="/assets/images/users/avatar-7.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -1161,7 +1161,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-7.jpg"
+                                                src="/assets/images/users/avatar-7.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -1170,7 +1170,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-6.jpg"
+                                                src="/assets/images/users/avatar-6.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -1179,7 +1179,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-5.jpg"
+                                                src="/assets/images/users/avatar-5.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />
@@ -1238,7 +1238,7 @@ export default function Profile() {
                                           <div className="avatar-group-item">
                                             <div className="avatar-xs">
                                               <img
-                                                src="assets/images/users/avatar-7.jpg"
+                                                src="/assets/images/users/avatar-7.jpg"
                                                 alt=""
                                                 className="rounded-circle img-fluid"
                                               />

@@ -2,9 +2,10 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import Flatpickr from "react-flatpickr";
-import { useCreateInvoiceMutation, useProductsQuery } from "../../services/api";
+import { useCreateInvoiceMutation, useProductsQuery, useSendInvoiceMutation } from "../../services/api";
 import Loader from "../Loader";
 import Select from "react-select"
+import TableLoader from "../TableLoader";
 
 export default function CreateInvoice({ customer, close }) {
   console.log(customer);
@@ -19,6 +20,8 @@ export default function CreateInvoice({ customer, close }) {
       seater: "",
     },
   ]);
+  const [taxNo, setTaxNo] = useState("")
+  const [mailSent, setMailSent] = useState(false)
   const [subTotal, setSubTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [tax, setTax] = useState(0);
@@ -31,13 +34,18 @@ export default function CreateInvoice({ customer, close }) {
   console.log(productsData);
 
   useEffect(() => {
+    setTaxNo(customer?.gst_no);
+  },[])
+
+  useEffect(() => {
     if (successMsg) {
       setTimeout(() => {
         setSuccessMsg("");
         close()
       }, 2000)
     }
-  },[successMsg])
+  }, [successMsg])
+  
   useEffect(() => {
     if (discount > 15) {
       setDiscountErr("max 15% is allowed");
@@ -158,8 +166,10 @@ export default function CreateInvoice({ customer, close }) {
     }
   };
 
-  const [sendInvoice, { data: invoiceData, isLoading: loading }] =
+  const [createInvoice, { data: invoiceData, isLoading: loading }] =
     useCreateInvoiceMutation();
+  
+
 
   const handleSubmit = async (e) => {
     e?.preventDefault();
@@ -169,6 +179,7 @@ export default function CreateInvoice({ customer, close }) {
       );
       if (product) {
         return {
+          
           description: item?.product,
           long_description: item?.description,
           qty: item?.qty,
@@ -190,13 +201,18 @@ export default function CreateInvoice({ customer, close }) {
     invoiceData["customer_id"] = customer?.id;
     invoiceData["date"] = `${date}`;
     invoiceData["tax_amount"] = tax;
+    invoiceData["mail_send"] = mailSent;
+    invoiceData["tax_number"] = taxNo
 
-    const response = await sendInvoice({ ...invoiceData });
+    const response = await createInvoice({ ...invoiceData });
     console.log(response, "response");
     if (response?.data?.status) {
       setSuccessMsg(response?.data?.message)
     }
   };
+
+
+  
 
   function convertToISODate(dateString) {
     const dateRegex = /^\d{2}-[a-zA-Z]{3}-\d{4}$/;
@@ -232,7 +248,7 @@ export default function CreateInvoice({ customer, close }) {
 
   return (
     <>
-      {isLoading && <Loader />}
+      {isLoading || (loading && <TableLoader />)}
       <form
         className="needs-validation"
         noValidate
@@ -284,14 +300,14 @@ export default function CreateInvoice({ customer, close }) {
           </div>
           <div className="card-body p-4">
             <div className="row g-3">
-              <div className="col-lg-3 col-sm-6">
+              <div className="col-lg-3 col-sm-6 hidden">
                 <label htmlFor="invoicenoInput">Invoice No</label>
                 <input
                   type="text"
-                  className="form-control bg-light border-0"
+                  className="form-control bg-light border-0 hidden"
                   id="invoicenoInput"
                   placeholder="Invoice No"
-                  value="#INV-25000355"
+                  value="#PRIO-25000355"
                   readOnly="readonly"
                 />
               </div>
@@ -353,7 +369,7 @@ export default function CreateInvoice({ customer, close }) {
                   className="form-control bg-light border-0"
                   id="billingName"
                   placeholder="Full Name"
-                  value="Mohamed Momin"
+                  value={customer?.first_name}
                   readOnly
                   required
                 />
@@ -369,8 +385,8 @@ export default function CreateInvoice({ customer, close }) {
                   data-plugin="cleave-phone"
                   id="billingPhoneno"
                   placeholder="(123)456-7890"
-                  // value="+91 90361 83631"
-                  // readOnly
+                  value={customer?.phone}
+                  readOnly
                   required
                 />
                 <div className="invalid-feedback">
@@ -387,6 +403,8 @@ export default function CreateInvoice({ customer, close }) {
                   id="billingTaxno"
                   placeholder="Tax Number"
                   required
+                  defaultValue={taxNo}
+                  onChange={(e)=>setTaxNo(e?.target?.value)}
                 />
                 <div className="invalid-feedback">
                   Please enter a tax number
@@ -464,19 +482,19 @@ export default function CreateInvoice({ customer, close }) {
                           id=""
                           placeholder="product"
                           name="products"
-                          value={{label: item?.product, value: item?.product}}
+                          value={{ label: item?.product, value: item?.product }}
                           onChange={(inputValue) =>
                             handleProductChange(item?.id, inputValue?.value)
                           }
-                          options={
-productsData?.data?.products?.map(prod => (
-                            {value: prod?.description,
-      label: prod?.description}
-                          ))
-                          }
+                          options={productsData?.data?.products?.map(
+                            (prod) => ({
+                              value: prod?.description,
+                              label: prod?.description,
+                            })
+                          )}
                         />
-                          
-                          {/* <option value="Product 1">Product 1</option>
+
+                        {/* <option value="Product 1">Product 1</option>
                           <option value="Product 2">Product 2</option>
                           <option value="Product 3">Product 3</option>
                           <option value="Product 4">Product 4</option>
@@ -724,10 +742,22 @@ productsData?.data?.products?.map(prod => (
             </button> */}
               <button
                 disabled={discountErr != "" ? true : false}
+                className="btn btn-info bg-info"
+                onClick={(e) => {
+                  setMailSent(true);
+                  handleSubmit(e);
+                }}
+              >
+                <i className="ri-send-plane-fill align-bottom me-1"></i>Save &
+                Create Invoice
+              </button>
+
+              <button
+                disabled={discountErr != "" ? true : false}
                 className="btn btn-secondary bg-secondary"
                 onClick={handleSubmit}
               >
-                <i className="ri-send-plane-fill align-bottom me-1"></i> Send
+                <i className="ri-send-plane-fill align-bottom me-1"></i> Create
                 Invoice
               </button>
             </div>

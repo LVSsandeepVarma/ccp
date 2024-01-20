@@ -436,7 +436,7 @@ export default function CommonInvoice({ type }) {
                               <div className="row">
                                 <div className="col-lg-12">
                                   <img
-                                    src="assets/images/ccp_logo.webp"
+                                    src="/assets/images/ccp_logo.webp"
                                     className="card-logo card-logo-dark user-profile-image img-fluid m-auto"
                                     alt="logo dark"
                                   />
@@ -1012,7 +1012,7 @@ export default function CommonInvoice({ type }) {
                               data-bs-title="John Robles"
                             >
                               <img
-                                src="assets/images/users/avatar-3.jpg"
+                                src="/assets/images/users/avatar-3.jpg"
                                 alt=""
                                 className="rounded-circle avatar-xs"
                               />

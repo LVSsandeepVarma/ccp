@@ -129,7 +129,7 @@ export default function Signin(){
       localStorage.setItem("pswd", data?.Password)
     }
     const response = await axios.post(
-      "https://controller.callcentreproject.com/bdo-api/auth/login",
+      "https://controller.connetz.shop/bdo-api/auth/login",
       { email: data.Email, password: data.Password },
     );
       if (response?.data?.status) {
