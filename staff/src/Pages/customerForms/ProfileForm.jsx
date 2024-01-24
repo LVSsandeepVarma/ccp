@@ -19,6 +19,7 @@ export default function ProfileForm({userInfo}) {
     setError,
     reset,
     setValue,
+    clearErrors,
     watch,
     formState: { errors },
   } = useForm({
@@ -90,6 +91,7 @@ export default function ProfileForm({userInfo}) {
   const onSubmit = async (data) => {
     // Handle form submission here
     // console.log(addEnq.current.click())
+    clearErrors();
     try {
       const response = await updateProfile({ data });
       console?.log(response, response?.data?.message);

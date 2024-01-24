@@ -45,6 +45,7 @@ export default function ProposalModal({ show, hide, proposalId }) {
     setError,
     trigger,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -111,7 +112,7 @@ export default function ProposalModal({ show, hide, proposalId }) {
       console.log(url, new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "inv.pdf"); //or any other extension
+      link.setAttribute("download", "pro.pdf"); //or any other extension
       document.body.appendChild(link);
       link.click();
     }
@@ -355,7 +356,10 @@ export default function ProposalModal({ show, hide, proposalId }) {
                                 Total Amount
                               </p>
                               <h5 className="fs-14 mb-0">
-                                ₹
+                                {
+                                  JSON.parse(sessionStorage.getItem("currency"))
+                                    ?.data?.currencies[0]?.symbol
+                                }
                                 <span id="total-amount">
                                   {data?.data?.proposal?.total}
                                 </span>
@@ -451,10 +455,7 @@ export default function ProposalModal({ show, hide, proposalId }) {
                                   (item, ind) => (
                                     <tr key={ind}>
                                       <th scope="row">
-                                        {item?.id
-                                          ?.toString()
-                                          ?.padStart(2, "0")
-                                          }
+                                        {item?.id?.toString()?.padStart(2, "0")}
                                       </th>
                                       <td className="text-start">
                                         <span className="fw-medium font-bold">
@@ -464,7 +465,14 @@ export default function ProposalModal({ show, hide, proposalId }) {
                                           {item?.long_description}
                                         </p>
                                       </td>
-                                      <td>₹{item?.rate}</td>
+                                      <td>
+                                        {
+                                          JSON.parse(
+                                            sessionStorage.getItem("currency")
+                                          )?.data?.currencies[0]?.symbol
+                                        }
+                                        {item?.rate}
+                                      </td>
                                       <td>{item?.qty}</td>
                                       <td className="text-end">
                                         {parseFloat(item?.rate) *
@@ -494,7 +502,15 @@ export default function ProposalModal({ show, hide, proposalId }) {
                                               id="cart-subtotal"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${data?.data?.proposal?.subtotal}`}
+                                              value={`${
+                                                JSON.parse(
+                                                  sessionStorage.getItem(
+                                                    "currency"
+                                                  )
+                                                )?.data?.currencies[0]?.symbol
+                                              } ${
+                                                data?.data?.proposal?.subtotal
+                                              }`}
                                             />
                                           </td>
                                         </tr>
@@ -509,7 +525,15 @@ export default function ProposalModal({ show, hide, proposalId }) {
                                               id="cart-tax"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${data?.data?.proposal?.total_tax}`}
+                                              value={`${
+                                                JSON.parse(
+                                                  sessionStorage.getItem(
+                                                    "currency"
+                                                  )
+                                                )?.data?.currencies[0]?.symbol
+                                              } ${
+                                                data?.data?.proposal?.total_tax
+                                              }`}
                                             />
                                           </td>
                                         </tr>
@@ -540,7 +564,13 @@ export default function ProposalModal({ show, hide, proposalId }) {
                                               id="cart-shipping"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${
+                                              value={`${
+                                                JSON.parse(
+                                                  sessionStorage.getItem(
+                                                    "currency"
+                                                  )
+                                                )?.data?.currencies[0]?.symbol
+                                              } ${
                                                 data?.data?.proposal
                                                   ?.shipping_charge
                                                   ? data?.data?.proposal
@@ -559,7 +589,13 @@ export default function ProposalModal({ show, hide, proposalId }) {
                                               id="cart-total"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${data?.data?.proposal?.total}`}
+                                              value={`${
+                                                JSON.parse(
+                                                  sessionStorage.getItem(
+                                                    "currency"
+                                                  )
+                                                )?.data?.currencies[0]?.symbol
+                                              } ${data?.data?.proposal?.total}`}
                                             />
                                           </td>
                                         </tr>

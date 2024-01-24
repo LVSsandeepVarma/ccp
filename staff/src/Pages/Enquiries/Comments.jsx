@@ -17,6 +17,24 @@ export default function Comments({type, logData, onHide}) {
   const [successMsg, setSuccessMsg] = useState("");
   const userInfo = JSON.parse(localStorage.getItem("cmtEnq"));
   console.log(userInfo, type, logData);
+  const [destinationOptions, setDestinationOptions] = useState([])
+
+  useEffect(() => {
+    if (type == "Not Interested"){
+      setDestinationOptions([
+                        { value: "REVIEW", label: "REVIEW" },
+                      ])
+    } else {
+      setDestinationOptions([
+        { value: "RINGING", label: "RINGING" },
+        { value: "POSTPONED", label: "POSTPONED" },
+        {
+          value: "NOTINTERESTED",
+          label: "NOTINTERESTED",
+        },
+      ]);
+    }
+  },[type])
 
     const {
       register,
@@ -24,12 +42,12 @@ export default function Comments({type, logData, onHide}) {
       setError,
       watch,
       trigger,
+      clearErrors,
       setValue,
       formState: { errors },
     } = useForm({
       defaultValues: {
         id: userInfo?.id ? userInfo?.id : "",
-        destination: "POSTPONED",
         date: new Date()
           .toLocaleString("en-GB", {
             day: "2-digit",
@@ -72,6 +90,7 @@ export default function Comments({type, logData, onHide}) {
     const onSubmit = async (data) => {
       // Handle form submission here
       // console.log(addEnq.current.click())
+      clearErrors();
       try {
         const response = await commentEnquiry({ data });
         console?.log(response, response?.data?.message);
@@ -285,15 +304,8 @@ export default function Comments({type, logData, onHide}) {
 
                         message: "status is required",
                       })}
-                      defaultValue={{ value: "POSTPONED", label: "POSTPONED" }}
-                      options={[
-                        { value: "RINGING", label: "RINGING" },
-                        { value: "POSTPONED", label: "POSTPONED" },
-                        {
-                          value: "NOTINTERESTED",
-                          label: "NOTINTERESTED",
-                        },
-                      ]}
+                      // defaultValue={{ value: "POSTPONED", label: "POSTPONED" }}
+                      options={destinationOptions}
                       onChange={(value) => {
                         setValue("destination", value?.value);
                         trigger("destination");

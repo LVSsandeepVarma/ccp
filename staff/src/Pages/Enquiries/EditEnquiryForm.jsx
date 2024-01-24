@@ -20,6 +20,8 @@ export default function EditEnquiry({ info, handleClose }) {
     handleSubmit,
     setError,
     setValue,
+    trigger,
+    clearErrors,
     watch,
     formState: { errors },
   } = useForm({
@@ -69,11 +71,13 @@ export default function EditEnquiry({ info, handleClose }) {
   const onSubmit = async (data) => {
     // Handle form submission here
     // console.log(addEnq.current.click())
+    clearErrors();
     try {
       const response = await editEnquiry({ data });
       console?.log(response, response?.data?.message);
       if (response?.data?.status) {
         setSuccessMsg(response?.data?.message);
+        
         localStorage.removeItem("editEnq");
         return;
       }
@@ -463,7 +467,7 @@ export default function EditEnquiry({ info, handleClose }) {
 
                         message: "status is required",
                       })}
-                      value={{ value: "RINGING", label: "RINGING" }}
+                      defaultValue={{ value: "RINGING", label: "RINGING" }}
                       options={[
                         { value: "RINGING", label: "RINGING" },
                         { value: "POSTPONED", label: "POSTPONED" },
@@ -472,7 +476,10 @@ export default function EditEnquiry({ info, handleClose }) {
                           label: "NOTINTERESTED",
                         },
                       ]}
-                      onChange={(e) => console.log(e?.value)}
+                      onChange={(value) => {
+                        setValue("destination", value?.value);
+                        trigger("destination");
+                      }}
                     />
                     {
                       <span className="error text-red-600">
@@ -544,40 +551,38 @@ export default function EditEnquiry({ info, handleClose }) {
               >
                 Close
               </button>
-                <div className="text-end">
-                  {!isLoading && (
-                    <button
-                      type="submit"
-                      className="btn btn-primary bg-primary"
-                      id="sa-success"
-                      // onClick={() => handleSubmit(onSubmit())}
-                    >
-                      Submit
-                    </button>
-                  )}
-                  {isLoading && (
-                    <button
-                      disabled
-                      type="button"
-                      className="btn btn-outline-primary btn-load"
-                    >
-                      <span className="d-flex align-items-center">
-                        <span className="flex-grow-1 me-2">Please Wait...</span>
-                        <span
-                          className="spinner-border flex-shrink-0"
-                          role="status"
-                        >
-                          <span className="visually-hidden">
-                            Please Wait...
-                          </span>
-                        </span>
+              <div className="text-end">
+                {!isLoading && (
+                  <button
+                    type="submit"
+                    className="btn btn-primary bg-primary"
+                    id="sa-success"
+                    // onClick={() => handleSubmit(onSubmit())}
+                  >
+                    Submit
+                  </button>
+                )}
+                {isLoading && (
+                  <button
+                    disabled
+                    type="button"
+                    className="btn btn-outline-primary btn-load"
+                  >
+                    <span className="d-flex align-items-center">
+                      <span className="flex-grow-1 me-2">Please Wait...</span>
+                      <span
+                        className="spinner-border flex-shrink-0"
+                        role="status"
+                      >
+                        <span className="visually-hidden">Please Wait...</span>
                       </span>
-                    </button>
-                  )}
-                </div>
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
+        </div>
       </form>
     </>
   );

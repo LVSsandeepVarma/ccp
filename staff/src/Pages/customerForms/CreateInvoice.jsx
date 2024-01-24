@@ -404,7 +404,7 @@ export default function CreateInvoice({ customer, close }) {
                   placeholder="Tax Number"
                   required
                   defaultValue={taxNo}
-                  onChange={(e)=>setTaxNo(e?.target?.value)}
+                  onChange={(e) => setTaxNo(e?.target?.value)}
                 />
                 <div className="invalid-feedback">
                   Please enter a tax number
@@ -757,7 +757,7 @@ export default function CreateInvoice({ customer, close }) {
                 className="btn btn-secondary bg-secondary"
                 onClick={handleSubmit}
               >
-                <i className="ri-send-plane-fill align-bottom me-1"></i> Create
+                <i className="ri-file-edit-fill align-bottom me-1"></i> Create
                 Invoice
               </button>
             </div>

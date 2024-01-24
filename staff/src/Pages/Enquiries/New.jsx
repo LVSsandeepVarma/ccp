@@ -10,6 +10,8 @@ import { useAddEnquiryMutation, useEnquiriesQuery } from "../../services/api";
 import Loader from "../Loader";
 import { Modal } from "react-bootstrap"
 import axios from "axios";
+import Swal from "sweetalert2";
+
 
 // import EditEnquiry from "./EditEnquiryForm";
 
@@ -29,6 +31,7 @@ export default function NewEnquiries() {
       register,
       handleSubmit,
       setError,
+      clearErrors,
       setValue,
       trigger,
       watch,
@@ -78,9 +81,17 @@ export default function NewEnquiries() {
       console?.log(response, response?.data?.message);
       if (response?.data?.status) {
         setSuccessMsg(response?.data?.message);
-        setTimeout(() => {
+        Swal.fire({
+          title: "Success!",
+          text: "Enquiry added successfully!",
+          icon: "success",
+          showCancelButton: !1,
+          confirmButtonText: "Ok",
+          confirmButtonColor: "btn btn-info  w-xs me-2 mt-2",
+          buttonsStyling: 1,
+          showCloseButton: !0,
+        });
           handleClose()
-        },1500)
         return;
       }
       if (response?.error?.data?.errors != {}) {
@@ -258,7 +269,7 @@ export default function NewEnquiries() {
                             <div className="form-icon right">
                               <input
                                 type="text"
-                                className="form-control"
+                                className="form-control !pr-4"
                                 id="fullName"
                                 placeholder="Enter name"
                                 {...register("name", {
@@ -284,7 +295,7 @@ export default function NewEnquiries() {
                             <div className="form-icon right">
                               <input
                                 type="email"
-                                className="form-control form-control-icon"
+                                className="form-control !pr-4 form-control-icon"
                                 id="emailInput"
                                 placeholder="Enter email"
                                 {...register("email", {
@@ -316,7 +327,7 @@ export default function NewEnquiries() {
                             <div className="form-icon right">
                               <input
                                 type="number"
-                                className="form-control"
+                                className="form-control !pr-4"
                                 id="mobileInput"
                                 placeholder="Enter Mobile Number"
                                 {...register("phone", {
@@ -354,7 +365,7 @@ export default function NewEnquiries() {
                             <div className="form-icon right">
                               <input
                                 type="address"
-                                className="form-control"
+                                className="form-control !pr-4"
                                 id="addressInput"
                                 placeholder="Enter Address"
                                 {...register("address", {
@@ -385,7 +396,7 @@ export default function NewEnquiries() {
                             <div className="form-icon right">
                               <input
                                 type="number"
-                                className="form-control"
+                                className="form-control !pr-4"
                                 id="pinInput"
                                 placeholder="Enter Postal Code"
                                 {...register("zip", {
@@ -414,7 +425,7 @@ export default function NewEnquiries() {
                             <div className="form-icon right">
                               <input
                                 type="text"
-                                className="form-control"
+                                className="form-control !pr-4"
                                 id="stateInput"
                                 placeholder="Enter State"
                                 {...register("state", {
@@ -439,7 +450,7 @@ export default function NewEnquiries() {
                             <div className="form-icon left">
                               <input
                                 type="text"
-                                className="form-control"
+                                className="form-control !pr-4"
                                 id="cityInput"
                                 placeholder="Enter City"
                                 {...register("city", {
@@ -502,6 +513,7 @@ export default function NewEnquiries() {
                                   type="submit"
                                   className="btn btn-primary bg-primary"
                                   id="sa-success"
+                                  onClick={() => clearErrors()}
                                 >
                                   Submit
                                 </button>

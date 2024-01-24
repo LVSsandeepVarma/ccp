@@ -362,7 +362,7 @@ export default function Enquiries({ type }) {
                                   >
                                     Email ID
                                   </td>
-                                  <td className="py-1 text-start">
+                                  <td className="py-1 text-start truncate  text-wrap">
                                     {enqSelected?.email}
                                   </td>
                                 </tr>

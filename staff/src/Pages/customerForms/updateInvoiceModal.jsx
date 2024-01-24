@@ -38,6 +38,7 @@ export default function UpdateInvoiceModal({
   paymentId
 }) {
   const [files, setFiles] = useState([]);
+  // const [paymentFormToggle, setPaymentFormToggle] = useState(false);
   const [encodedFile, setEncodedFile] = useState("");
   const [apiErr, setApiErr] = useState("");
   const [fileErr, setFileErr] = useState("");
@@ -48,6 +49,7 @@ export default function UpdateInvoiceModal({
     setError,
     trigger,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -164,7 +166,7 @@ export default function UpdateInvoiceModal({
   const onSubmit = async (data) => {
     // Handle form submission here
     // console.log(addEnq.current.click())
-
+clearErrors();
     try {
       const response = await createPayment({
         ...data,
@@ -177,6 +179,7 @@ export default function UpdateInvoiceModal({
       console?.log(response, response?.data?.message);
       if (response?.data?.status) {
         setSuccessMsg(response?.data?.message);
+        togglePaymentForm()
         localStorage.removeItem("editEnq");
         return;
       }
@@ -221,28 +224,57 @@ export default function UpdateInvoiceModal({
       >
         <div className="modal-content">
           <Modal.Header c>
-            <h5 className="modal-title" id="viewInvoiceLabel">
-              {data?.data?.invoice?.prefix}-{data?.data?.id}
-              {/* {data?.data?.invoice?.status == 1 && (
-                <button
-                  type="button"
-                  className="btn btn-secondary bg-secondary mx-4"
-                  onClick={() => togglePaymentForm()}
-                >
-                  Make Payment
-                </button>
-              )} */}
-            </h5>
+            <div className="flex justify-between items-center w-full gap-3">
+              <div className="flex justify-between items-center w-full">
+                <div>
+                  <h5 className="modal-title" id="viewInvoiceLabel">
+                    {data?.data?.invoice?.prefix}-
+                    {data?.data?.id?.toString().padStart(5, "0") +
+                      "/" +
+                      (new Date(data?.data?.invoice?.date).getMonth() + 1)
+                        ?.toString()
+                        ?.padStart(2, "0") +
+                      "/" +
+                      new Date(data?.data?.invoice?.date).getFullYear()}
+                    {data?.data?.invoice?.status == 1 && (
+                      <>
+                        <button
+                          type="button"
+                          className="btn btn-secondary bg-secondary mx-4"
+                          onClick={() => togglePaymentForm()}
+                          disabled={
+                            parseInt(data?.data?.invoice?.payments_limit) ==
+                            parseInt(data?.data?.invoice?.payments_count)
+                          }
+                        >
+                          Make Payment
+                        </button>
+                      </>
+                    )}
+                  </h5>
+                  {parseInt(data?.data?.invoice?.payments_limit) ==
+                    parseInt(data?.data?.invoice?.payments_count) && (
+                    <small className="badge badge-soft-danger pulse text-sm mt-2 flex items-center gap-2 w-fit">
+                      <i className="ri-alert-line"></i>Payment limit reached
+                    </small>
+                  )}
+                </div>
+                <div>
+                  <p className="text-gray-600 font-semibold">
+                    Payments limit :{" "}
+                    <b>{data?.data?.invoice?.payments_limit}</b>
+                  </p>
+                  <p className="text-gray-600 font-semibold">
+                    Payments count :{" "}
+                    <b>{data?.data?.invoice?.payments_count}</b>
+                  </p>
+                </div>
+              </div>
 
-            <button
-              type="button"
-              className="btn-close text-black text-2xl"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-              onClick={hide}
-            >
-              X
-            </button>
+              <p className="cursor-pointer  text-2xl " onClick={hide}>
+                X
+              </p>
+            </div>
           </Modal.Header>
           <SimpleBar className="max-h-[700px]">
             <Modal.Body className="">
@@ -355,7 +387,6 @@ export default function UpdateInvoiceModal({
                             data-select2-id="select2-data-39-vmv4"
                             tabIndex="-1"
                             aria-hidden="true"
-                            
                             options={paymentModesData?.data?.payment_modes?.map(
                               (prod) => ({
                                 value: prod?.id,
@@ -551,7 +582,10 @@ export default function UpdateInvoiceModal({
                                 Total Amount
                               </p>
                               <h5 className="fs-14 mb-0">
-                                ₹
+                                {
+                                  JSON.parse(sessionStorage.getItem("currency"))
+                                    ?.data?.currencies[0]?.symbol
+                                }
                                 <span id="total-amount">
                                   {data?.data?.invoice?.total}
                                 </span>
@@ -655,7 +689,14 @@ export default function UpdateInvoiceModal({
                                           {item?.long_description}
                                         </p>
                                       </td>
-                                      <td>₹{item?.rate}</td>
+                                      <td>
+                                        {
+                                          JSON.parse(
+                                            sessionStorage.getItem("currency")
+                                          )?.data?.currencies[0]?.symbol
+                                        }
+                                        {item?.rate}
+                                      </td>
                                       <td>{item?.qty}</td>
                                       <td className="text-end">
                                         {parseFloat(item?.rate) *
@@ -685,7 +726,15 @@ export default function UpdateInvoiceModal({
                                               id="cart-subtotal"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${data?.data?.invoice?.subtotal}`}
+                                              value={`${
+                                                JSON.parse(
+                                                  sessionStorage.getItem(
+                                                    "currency"
+                                                  )
+                                                )?.data?.currencies[0]?.symbol
+                                              } ${
+                                                data?.data?.invoice?.subtotal
+                                              }`}
                                             />
                                           </td>
                                         </tr>
@@ -700,7 +749,15 @@ export default function UpdateInvoiceModal({
                                               id="cart-tax"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${data?.data?.invoice?.total_tax}`}
+                                              value={`${
+                                                JSON.parse(
+                                                  sessionStorage.getItem(
+                                                    "currency"
+                                                  )
+                                                )?.data?.currencies[0]?.symbol
+                                              } ${
+                                                data?.data?.invoice?.total_tax
+                                              }`}
                                             />
                                           </td>
                                         </tr>
@@ -731,7 +788,13 @@ export default function UpdateInvoiceModal({
                                               id="cart-shipping"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${
+                                              value={`${
+                                                JSON.parse(
+                                                  sessionStorage.getItem(
+                                                    "currency"
+                                                  )
+                                                )?.data?.currencies[0]?.symbol
+                                              } ${
                                                 data?.data?.invoice
                                                   ?.shipping_charge
                                                   ? data?.data?.invoice
@@ -750,7 +813,13 @@ export default function UpdateInvoiceModal({
                                               id="cart-total"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${data?.data?.invoice?.total}`}
+                                              value={`${
+                                                JSON.parse(
+                                                  sessionStorage.getItem(
+                                                    "currency"
+                                                  )
+                                                )?.data?.currencies[0]?.symbol
+                                              } ${data?.data?.invoice?.total}`}
                                             />
                                           </td>
                                         </tr>

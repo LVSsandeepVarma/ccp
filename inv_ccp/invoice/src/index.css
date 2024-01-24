@@ -1,0 +1,101 @@
+ .bg-overlay-pattern {
+   opacity: .3;
+ }
+
+ @media only screen and (max-width: 600px) {
+   .d-flex-center {
+     justify-content: center !important;
+     text-align: center;
+     gap: 5px;
+   }
+
+   .hero-section {
+     margin-bottom: 2rem;
+   }
+
+   .d-flex-center img {
+     margin-bottom: 10px;
+   }
+
+   #hero {
+     padding-top: 10px !important;
+   }
+
+   .tbl-100 {
+     width: 100% !important;
+   }
+
+   .fs-sm-12px {
+     font-size: 12px !important;
+   }
+ }
+
+ td input {
+   padding: 2px 6px !important;
+ }
+
+ .layout-wrapper.landing,
+ .hero-section {
+   background-color: transparent;
+ }
+
+ .section {
+   position: unset;
+ }
+
+ .border-top-dashed {
+   border-top-style: dashed !important;
+   border-top: 1px solid #e9ebec;
+ }
+
+ .bg-light {
+   background-color: #f8f9fa;
+   /* Light gray background */
+ }
+
+ .border-0 {
+   border: none;
+ }
+
+ .whitespace-break-spaces {
+   white-space: break-spaces;
+   /* Wrap text at spaces */
+ }
+
+ .line-clamp-5 {
+   display: -webkit-box;
+   -webkit-line-clamp: 5;
+   -webkit-box-orient: vertical;
+   overflow: hidden;
+   /* Clamp text to 5 lines */
+ }
+
+ .motion-reduce transition-all {
+   transition: none !important;
+   /* Disable all transitions */
+ }
+
+ .hover\:line-clamp-none:hover {
+   -webkit-line-clamp: none;
+   /* Remove line clamping on hover */
+ }
+
+ .py-1 {
+   padding-top: 0.25rem;
+   padding-bottom: 0.25rem;
+   /* Add padding */
+ }
+
+ .clamped-text {
+   overflow: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;
+   max-width: 300px;
+   /* Adjust the max-width as per your design */
+ }
+
+ .clamped-text:hover {
+   white-space: normal;
+   text-overflow: clip;
+   /* or you can use 'initial' for more browser compatibility */
+ }

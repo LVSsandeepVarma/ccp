@@ -51,7 +51,7 @@ export default function CommonInvoice({ type }) {
                             Paid Invoices
                           </p>
                           <h4 className="mb-2">
-                            ₹{" "}
+                            {JSON.parse(sessionStorage.getItem("currency"))?.data?.currencies[0]?.symbol}
                             <span className="counter-value" data-target="25390">
                               0
                             </span>
@@ -90,7 +90,7 @@ export default function CommonInvoice({ type }) {
                             Due Invoices
                           </p>
                           <h4 className="mb-2">
-                            ₹{" "}
+                            {JSON.parse(sessionStorage.getItem("currency"))?.data?.currencies[0]?.symbol}
                             <span className="counter-value" data-target="25390">
                               0
                             </span>
@@ -129,7 +129,7 @@ export default function CommonInvoice({ type }) {
                             Unpaid Invoices
                           </p>
                           <h4 className="mb-2">
-                            ₹{" "}
+                            {JSON.parse(sessionStorage.getItem("currency"))?.data?.currencies[0]?.symbol}
                             <span className="counter-value" data-target="25390">
                               0
                             </span>
@@ -168,7 +168,7 @@ export default function CommonInvoice({ type }) {
                             Partially Paid
                           </p>
                           <h4 className="mb-2">
-                            ₹{" "}
+                            {JSON.parse(sessionStorage.getItem("currency"))?.data?.currencies[0]?.symbol}
                             <span className="counter-value" data-target="25390">
                               0
                             </span>

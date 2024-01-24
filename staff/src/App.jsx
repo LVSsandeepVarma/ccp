@@ -30,9 +30,6 @@ import UnpaidRecurringInvoices from './Pages/invoices/recurringInvoice/Unpaid';
 import DueRecurringInvoices from './Pages/invoices/recurringInvoice/Due';
 import PartiallyPaidRecurringInvoices from './Pages/invoices/recurringInvoice/PartiallyPaid';
 import All from './Pages/invoices/proposal/AllInvoices';
-import AcceptedInvoices from './Pages/invoices/proposal/Accepted';
-import DeclinedInvoices from './Pages/invoices/proposal/Declined';
-import SentInvoices from './Pages/invoices/proposal/Sent';
 import Products from './Pages/Products';
 import Profile from './Pages/Profile';
 import ProfileChat from './Pages/ProfileChat';
@@ -43,6 +40,10 @@ import ForgotPassword from './Pages/ForgotPassword';
 import OTPVerification from './Pages/Opt';
 import ResetPassword from './Pages/resetPassword';
 import SessionExpired from './Pages/sessionExpired';
+import AcceptedProposals from './Pages/invoices/proposal/Accepted';
+import DeclinedProposals from './Pages/invoices/proposal/Declined';
+import PendingProposals from './Pages/invoices/proposal/Pending';
+import SentProposals from './Pages/invoices/proposal/Sent';
 
 function App() {
   useEffect(() => {
@@ -61,7 +62,7 @@ function App() {
           <Route path="/lockscreen" element={<LockScreen />}></Route>
           <Route path="/:id" element={<OTPVerification />}></Route>
           <Route path="/reset-password/:id" element={<ResetPassword />}></Route>
-          <Route path='/session-expired' element={<SessionExpired/>}></Route>
+          <Route path="/session-expired" element={<SessionExpired />}></Route>
 
           {/* enquiries routes start */}
           <Route
@@ -77,7 +78,10 @@ function App() {
             <Route path="/enquiries/new" element={<NewEnquiries />}></Route>
             <Route path="/enquiries/ringing" element={<Ringing />}></Route>
             <Route path="/enquiries/postponed" element={<Postponed />}></Route>
-            <Route path="/enquiries/not-interested" element={<NotInterested />}></Route>
+            <Route
+              path="/enquiries/not-interested"
+              element={<NotInterested />}
+            ></Route>
             <Route path="/enquiries/review" element={<Review />}></Route>
             <Route path="/enquiries/signed" element={<Signed />}></Route>
             {/* enquiries routes end */}
@@ -89,8 +93,14 @@ function App() {
             {/* call record routes */}
             <Route path="/calls/inbound" element={<Inbound />}></Route>
             <Route path="/calls/outbound" element={<Outbound />}></Route>
-            <Route path="/calls/inbound-missed" element={<InboundMissed />}></Route>
-            <Route path="/calls/outbound-missed" element={<OutboundMissed />}></Route>
+            <Route
+              path="/calls/inbound-missed"
+              element={<InboundMissed />}
+            ></Route>
+            <Route
+              path="/calls/outbound-missed"
+              element={<OutboundMissed />}
+            ></Route>
 
             {/* ticket routes */}
             <Route path="/tickets" element={<Tickets />}></Route>
@@ -132,13 +142,17 @@ function App() {
             <Route path="/proposal/all" element={<All />}></Route>
             <Route
               path="/proposal/accepted"
-              element={<AcceptedInvoices />}
+              element={<AcceptedProposals />}
             ></Route>
             <Route
               path="/proposal/declined"
-              element={<DeclinedInvoices />}
+              element={<DeclinedProposals />}
             ></Route>
-            <Route path="/proposal/sent" element={<SentInvoices />}></Route>
+            <Route
+              path="/proposal/pending"
+              element={<PendingProposals />}
+            ></Route>
+            <Route path="/proposal/sent" element={<SentProposals />}></Route>
 
             {/* products routes */}
             <Route path="/products" element={<Products />}></Route>

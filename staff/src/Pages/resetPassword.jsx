@@ -21,6 +21,7 @@ export default function ResetPassword() {
   const {
     register,
     handleSubmit,
+    clearErrors,
     setError,
     formState: { errors },
   } = useForm({
@@ -118,6 +119,7 @@ export default function ResetPassword() {
 
   const onSubmit = async (data) => {
     // Handle form submission here
+    clearErrors();
     console.log(data);
     try {
       dispatch(showLoader())

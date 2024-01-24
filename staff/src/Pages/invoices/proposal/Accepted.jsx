@@ -1,9 +1,9 @@
-import CommonInvoice from "./Common";
+import CommonProposal from "./Common";
 
-export default function AcceptedInvoices() {
+export default function AcceptedProposals() {
   return (
     <>
-      <CommonInvoice type={"Accepted"} />
+      <CommonProposal type={"Accepted"} />
     </>
   );
 }

@@ -20,6 +20,7 @@ export default function Signin(){
   const {
     register,
     handleSubmit,
+    clearErrors,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -122,6 +123,7 @@ export default function Signin(){
 
   const onSubmit = async(data) => {
     // Handle form submission here
+    clearErrors();
     try {
       dispatch(showLoader())
       if (saveCredentials) {

@@ -381,7 +381,7 @@ export const api = createApi({
           console.log(err);
         },
       }),
-      invalidatesTags: ["customers","customerInvoices"],
+      invalidatesTags: ["customers", "customerInvoices"],
       middleware: bearerMiddleware,
     }),
     sendProposal: builder.mutation({
@@ -424,6 +424,75 @@ export const api = createApi({
       }),
       middleware: bearerMiddleware,
     }),
+    getAllInvoices: builder.query({
+      query: (args) => ({
+        url: `/invoices/get-by-status?status=${args?.split(" ").join("_")}`,
+        onSuccess: (res) => {
+          console.log("success", res);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      }),
+      middleware: bearerMiddleware,
+    }),
+    searchInvoice: builder.mutation({
+      query: (data) => ({
+        url: "/invoices/search",
+        method: "POST",
+        body: data,
+        onSuccess: (res) => {
+          console.log("success", res);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      }),
+      middleware: bearerMiddleware,
+    }),
+    invoicesPagination: builder.query({
+      query: (arg) => ({
+        url: `/invoices/get-by-status?status=${arg.type
+          ?.split(" ")
+          .join("_")}&page=${arg.no}`,
+      }),
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+    getAllProposals: builder.query({
+      query: (args) => ({
+        url: `/proposals/get-by-status?status=${args?.split(" ").join("_")}`,
+        onSuccess: (res) => {
+          console.log("success", res);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      }),
+      middleware: bearerMiddleware,
+    }),
+    searchProposal: builder.mutation({
+      query: (data) => ({
+        url: "/proposals/search",
+        method: "POST",
+        body: data,
+        onSuccess: (res) => {
+          console.log("success", res);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
+      }),
+      middleware: bearerMiddleware,
+    }),
+    proposalsPagination: builder.query({
+      query: (arg) => ({
+        url: `/proposals/get-by-status?status=${arg.type
+          ?.split(" ")
+          .join("_")}&page=${arg.no}`,
+      }),
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+
     // Add more endpoints as needed
   }),
 });
@@ -461,4 +530,10 @@ export const {
   useSendProposalMutation,
   useViewProposalQuery,
   useDownloadProposalMutation,
+  useGetAllInvoicesQuery,
+  useSearchInvoiceMutation,
+  useLazyInvoicesPaginationQuery,
+  useGetAllProposalsQuery,
+  useSearchProposalMutation,
+  useLazyProposalsPaginationQuery
 } = api;

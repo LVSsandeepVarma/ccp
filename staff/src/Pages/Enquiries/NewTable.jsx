@@ -31,7 +31,9 @@ const [tableData, setTableData] = useState([])
   useEffect(() => {
 
     dispatch(showLoader())
-    const debounceTimer = setTimeout(() => {
+    if (searchTerm != "")
+    {
+      const debounceTimer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm, "searchTerm");
       console.log(searchTerm)
       if (searchTerm != "") {
@@ -42,12 +44,17 @@ const [tableData, setTableData] = useState([])
       } else {
         setTableData(enquiriesData);
       }
-      dispatch(hideLoader())
-    }, 1500);
+        dispatch(hideLoader())
+        return () => {
+          clearTimeout(debounceTimer);
+        };
+      }, 1500);
+    } else {
+      dispatch(hideLoader());
+      setTableData(enquiriesData)
+    }
     // Clear the timeout on each key press to reset the timer
-    return () => {
-      clearTimeout(debounceTimer);
-    };
+    
   }, [searchTerm, enquiriesData]);
 
     useEffect(() => {
@@ -122,7 +129,7 @@ const [tableData, setTableData] = useState([])
             type="search"
             value={searchTerm}
             onChange={handleInputChange}
-            className="form-control form-control-sm"
+            className="form-control "
             placeholder="Search Enquiries"
             aria-controls="example"
           />
@@ -211,7 +218,7 @@ const [tableData, setTableData] = useState([])
                 ))}
               {tableData?.data?.enquiries?.data?.length == 0 && (
                 <tr>
-                  <td colSpan={8}>
+                  <td colSpan={10}>
                     <p className="text-center w-full text-lg">No data found</p>
                   </td>
                 </tr>

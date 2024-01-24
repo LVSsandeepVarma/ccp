@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Navbar from "./Navbar";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
-import { useGetUserInfoQuery, useLogoutMutation } from "../services/api";
+import { useCurrencyQuery, useGetUserInfoQuery, useLogoutMutation } from "../services/api";
 import Loader from "./Loader";
 
 export default function Header() {
@@ -13,6 +13,22 @@ export default function Header() {
   // eslint-disable-next-line no-unused-vars
   const { data, loading, error } = useGetUserInfoQuery();
   console.log(data?.data?.staff, loading, error);
+
+    const {
+      data: currency,
+      isLoading: curLoading,
+      error: currencyErr,
+    } = useCurrencyQuery();
+    console.log(currency, loading, currencyErr);
+
+    useEffect(() => {
+      const res = currency?.data?.currencies?.map((option) => ({
+        value: option?.id,
+        label: `${option?.name} (${option?.symbol})`,
+      }));
+      console.log(res, "currency", currency);
+      sessionStorage.setItem("currency", JSON.stringify(currency));
+    }, [currency]);
 
 
     useEffect(() => {

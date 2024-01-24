@@ -42,10 +42,6 @@ export default function CustomersTable() {
     };
   }, [searchTerm, customersData]);
 
-  useEffect(() => {
-    // Replace this with your actual search logic (e.g., API call)
-    console.log("Searching with debounced term:", debouncedSearchTerm);
-  }, [debouncedSearchTerm]);
 
   // Handler for input change
   const handleInputChange = (event) => {

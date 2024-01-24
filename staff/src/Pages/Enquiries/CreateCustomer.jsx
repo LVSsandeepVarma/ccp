@@ -30,6 +30,7 @@ export default function CreateCustomer({ id,type, onHide }) {
         setError,
         setValue,
         trigger,
+        clearErrors,
         watch,
         formState: { errors },
       } = useForm({
@@ -53,6 +54,7 @@ export default function CreateCustomer({ id,type, onHide }) {
     const onSubmit = async (data) => {
       // Handle form submission here
       // console.log(addEnq.current.click())
+      clearErrors();
       try {
         const response = await addEnquiry({ data });
         console?.log(response, response?.data?.message);

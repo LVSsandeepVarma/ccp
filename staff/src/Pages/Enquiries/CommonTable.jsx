@@ -313,7 +313,7 @@ const handleCustomPage = (pageNO) => {
                   ↓
                 </span>
               </th>
-              <th>
+              <th className="md:!w-[300px]">
                 Name{" "}
                 <span
                   className="cursor-pointer"
@@ -403,11 +403,12 @@ const handleCustomPage = (pageNO) => {
                   ↓
                 </span>
               </th>
-              <th>Action</th>
+              {type != "Review" && <th>Action</th>}
             </tr>
           </thead>
           <tbody className="list form-check-all">
             {tableData?.data?.enquiries?.data?.length > 0 &&
+              !loaderState &&
               tableData?.data?.enquiries?.data?.map((row, ind) => (
                 <tr
                   key={ind}
@@ -454,54 +455,58 @@ const handleCustomPage = (pageNO) => {
                       Lead
                     </span>
                   </td>
-                  <td className="text-start">
-                    <a
-                      data-bs-toggle="tooltip"
-                      data-bs-placement="top"
-                      data-bs-title="Comment"
-                      onClick={() => handleCommentEnquiry(row)}
-                    >
-                      <button
-                        className="btn btn-soft-info py-1 btn-sm"
-                        data-bs-toggle="modal"
-                        data-bs-target="#createTask"
-                        onClick={() => handleCommentEnquiry(row)}
-                      >
-                        <span className="">
-                          <i className="mdi mdi-comment-outline align-middle fs-15"></i>
-                        </span>
-                      </button>
-                    </a>
-                    <a
-                      data-bs-toggle="tooltip"
-                      // data-bs-placement="top"
-                      // data-bs-title="Convert to Customer"
-                      onClick={() => handleCreateCustomer(row)}
-                    >
-                      <button
-                        className="btn btn-soft-primary py-1 btn-sm"
-                        // data-bs-toggle="modal"
-                        // data-bs-target="#convertCustomer"
-                        onClick={() => handleCreateCustomer(row)}
-                      >
-                        <span className="">
-                          <i className="mdi mdi-account-edit-outline align-middle fs-15"></i>
-                        </span>
-                      </button>
-                    </a>
-                  </td>
+                  {type != "Review" && 
+                      <td className="text-start">
+                        <a
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          data-bs-title="Comment"
+                          onClick={() => handleCommentEnquiry(row)}
+                        >
+                          <button
+                            className="btn btn-soft-info py-1 btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#createTask"
+                            onClick={() => handleCommentEnquiry(row)}
+                          >
+                            <span className="">
+                              <i className="mdi mdi-comment-outline align-middle fs-15"></i>
+                            </span>
+                          </button>
+                        </a>
+                        {type != "Not Interested" && (
+                          <a
+                            data-bs-toggle="tooltip"
+                            // data-bs-placement="top"
+                            // data-bs-title="Convert to Customer"
+                            onClick={() => handleCreateCustomer(row)}
+                          >
+                            <button
+                              className="btn btn-soft-primary py-1 btn-sm"
+                              // data-bs-toggle="modal"
+                              // data-bs-target="#convertCustomer"
+                              onClick={() => handleCreateCustomer(row)}
+                            >
+                              <span className="">
+                                <i className="mdi mdi-account-edit-outline align-middle fs-15"></i>
+                              </span>
+                            </button>
+                          </a>
+                        )}
+                      </td>
+                    }
                 </tr>
               ))}
             {tableData?.data?.enquiries?.data?.length == 0 && (
-              <tr>
+              <tr className="!border-0">
                 <td colSpan={8}>
                   <p className="text-center w-full text-lg">No data found</p>
                 </td>
               </tr>
             )}
           </tbody>
-          {loaderState && <TableLoader />}
         </table>
+        {loaderState && <Loader />}
       </div>
       <div className="flex justify-between">
         <div className="">

@@ -69,40 +69,41 @@ export default function PaymentsTable({ customerData, currentTab, handleShowInvo
             <h4 className="card-title mb-0">Payments</h4>
           </div>
           <div className="card-body">
-            <div className="flex flex-wrap justify-start gap-4 my-2 items-center">
-              <button
-                type="button"
-                className={`btn ${
+            <div className="grid grid-cols-3">
+              <div
+                className={` ${
                   activePaymentTab === 1
-                    ? " bg-success text-white"
-                    : "btn-outline-success"
-                }`}
+                    ? " text-success border-b-4 rounded text-lg  success-radial-gradient border-success "
+                    : "text-gray-600 border-b text-semibold text-muted hover:!text-success"
+                } !p-4 transition ease  text-center duration-800 cursor-pointer `}
                 onClick={() => setActivePaymentTab(1)}
               >
+                <i className="mdi mdi-cash-check fs-19 mx-2 "></i>
                 Payment Success
-              </button>
-              <button
-                type="button"
-                className={`btn ${
+              </div>
+              <div
+                className={` ${
                   activePaymentTab === 0
-                    ? " bg-secondary text-white"
-                    : "btn-outline-secondary"
-                }`}
+                    ? " text-secondary border-b-4 rounded text-lg pending-radial-gradient border-secondary"
+                    : "text-gray-600 border-b text-semibold text-muted"
+                }  !p-4 transition ease-in-out  text-center duration-1000 cursor-pointer hover:!text-secondary`}
                 onClick={() => setActivePaymentTab(0)}
               >
+                <i className="mdi mdi-cash-lock fs-19 mx-2 "></i>
                 Payment Pending
-              </button>
-              <button
+              </div>
+              <div
                 type="button"
-                className={`btn ${
+                className={` ${
                   activePaymentTab === 2
-                    ? " bg-danger text-white"
-                    : "btn-outline-danger"
-                }`}
+                    ? " text-danger border-b-4 rounded text-lg failed-radial-gradient border-danger"
+                    : "text-gray-600 border-b text-semibold text-muted"
+                }  !p-4 transition ease-in-out text-center duration-1000 cursor-pointer hover:!text-danger`}
                 onClick={() => setActivePaymentTab(2)}
               >
+                <i className="mdi mdi-cash-remove fs-19 mx-2 "></i>
                 Payment Failed
-              </button>
+              </div>
             </div>
             <div className="row">
               <div
@@ -166,7 +167,12 @@ export default function PaymentsTable({ customerData, currentTab, handleShowInvo
                                 </td>
                                 <td className="text-start">
                                   <span className="badge badge-soft-success fs-12">
-                                    ₹{payment?.amount}
+                                    {
+                                      JSON.parse(
+                                        sessionStorage.getItem("currency")
+                                      )?.data?.currencies[0]?.symbol
+                                    }{" "}
+                                    {payment?.amount}
                                   </span>
                                 </td>
                                 <td className="text-start">

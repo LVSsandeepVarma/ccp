@@ -32,7 +32,7 @@ export default function Navbar() {
                   className={`nav-link menu-link collapsed ${
                     location?.pathname?.includes("/enquiries") ? "active" : ""
                   }`}
-                  // href="#sidebarApps"
+                  href="#sidebarApps"
                   data-bs-toggle="collapse"
                   role="button"
                   aria-expanded="false"
@@ -116,16 +116,16 @@ export default function Navbar() {
                   className={`nav-link menu-link collapsed ${
                     location?.pathname?.includes("/calls") ? "active" : ""
                   }`}
-                  // href="#sidebarApps"
+                  href="#callrecords"
                   data-bs-toggle="collapse"
                   role="button"
                   aria-expanded="false"
-                  aria-controls="sidebarApps"
+                  aria-controls="callrecords"
                 >
                   <i className="mdi mdi-phone-log-outline"></i>{" "}
                   <span data-key="t-call-recorde">Call Records</span>
                 </a>
-                <div className=" menu-dropdown" id="sidebarApps">
+                <div className=" menu-dropdown" id="callrecords">
                   <ul className="nav nav-sm flex-column">
                     <li className="nav-item">
                       <a
@@ -186,11 +186,11 @@ export default function Navbar() {
                   className={`nav-link menu-link collapsed ${
                     location?.pathname?.includes("-invoices") ? "active" : ""
                   }`}
-                  // href="#sidebarLayouts"
+                  href="#invoicess"
                   data-bs-toggle="collapse"
                   role="button"
                   aria-expanded="false"
-                  aria-controls="sidebarLayouts"
+                  aria-controls="invoicess"
                 >
                   <i className="mdi mdi-file-document-multiple-outline"></i>{" "}
                   <span data-key="t-invoices">Invoices</span>{" "}
@@ -198,7 +198,7 @@ export default function Navbar() {
                     Hot
                   </span>
                 </a>
-                <div className=" menu-dropdown" id="sidebarLayouts">
+                <div className=" menu-dropdown" id="invoicess">
                   <ul className="nav nav-sm flex-column">
                     <li className="nav-item">
                       <a
@@ -214,12 +214,12 @@ export default function Navbar() {
                       </a>
                       <div className=" menu-dropdown" id="sidebarInvoice">
                         <ul className="nav nav-sm flex-column">
-                          <li className="nav-item">
+                          {/* <li className="nav-item">
                             <a href="/all-invoices" className="nav-link">
                               <i className=" mdi mdi-format-list-bulleted"></i>{" "}
                               All
                             </a>
-                          </li>
+                          </li> */}
                           <li className="nav-item">
                             <a
                               href="/paid-invoices"
@@ -256,7 +256,7 @@ export default function Navbar() {
                         </ul>
                       </div>
                     </li>
-                    <li className="nav-item">
+                    {/* <li className="nav-item">
                       <a
                         href="#sidebarInvoice"
                         className="nav-link collapsed"
@@ -314,7 +314,7 @@ export default function Navbar() {
                           </li>
                         </ul>
                       </div>
-                    </li>
+                    </li> */}
                     <li className="nav-item">
                       <a
                         href="#sidebarProposal"
@@ -328,12 +328,12 @@ export default function Navbar() {
                       </a>
                       <div className=" menu-dropdown" id="sidebarProposal">
                         <ul className="nav nav-sm flex-column">
-                          <li className="nav-item">
+                          {/* <li className="nav-item">
                             <a href="proposal/all" className="nav-link">
                               <i className=" mdi mdi-format-list-bulleted"></i>{" "}
                               All
                             </a>
-                          </li>
+                          </li> */}
                           <li className="nav-item">
                             <a
                               href="/proposal/accepted"
@@ -354,12 +354,20 @@ export default function Navbar() {
                           </li>
                           <li className="nav-item">
                             <a
+                              href="/proposal/pending"
+                              className="nav-link text-primary"
+                            >
+                              <i className="mdi mdi-file-clock-outline"></i> Pending
+                            </a>
+                          </li>
+                          {/* <li className="nav-item">
+                            <a
                               href="/proposal/sent"
                               className="nav-link text-warning"
                             >
                               <i className="mdi mdi-file-move-outline"></i> Sent
                             </a>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
                     </li>
@@ -371,7 +379,7 @@ export default function Navbar() {
                   className={`nav-link menu-link collapsed ${
                     location?.pathname?.includes("/products") ? "active" : ""
                   }`}
-                  // href="#products"
+                  href="#products"
                   data-bs-toggle="collapse"
                   role="button"
                   aria-expanded="false"

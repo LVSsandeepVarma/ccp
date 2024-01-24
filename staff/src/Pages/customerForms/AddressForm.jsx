@@ -9,6 +9,7 @@ export default function AddressForm({ userInfo, id }) {
   const [apiErr, setApiErr] = useState("");
   const [customerInfo, setCustomerInfo] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
+  const [shippingSameAsBilling, setShippingSameAsBilling] = useState(false)
 
   console.log(userInfo);
   const {
@@ -17,6 +18,7 @@ export default function AddressForm({ userInfo, id }) {
     handleSubmit,
     setError,
     reset,
+    clearErrors,
     trigger,
     setValue,
     watch,
@@ -28,10 +30,28 @@ export default function AddressForm({ userInfo, id }) {
 
   const billingZip = watch("billing_zip");
   const shippingZip = watch("shipping_zip");
-
+  const billing_address = watch("billing_address");
+  const billingState = watch("billing_state");
+  const billingCity = watch("billing_city")
+  const billingCountry = watch("billing_country");
+ 
   const [updateProfile, { isLoading, error }] = useUpdateProfileAddressMutation();
   console.log(error);
 
+
+  useEffect(() => {
+    setValue("shipping_address", billing_address);
+    setValue("shipping_zip", billingZip);
+    setValue("shipping_city", billingCity)
+    setValue("shipping_state", billingState);
+    setValue("shipping_country", billingCountry);
+    trigger("shipping_address");
+    trigger("shipping_zip");
+    trigger("shipping_city");
+    trigger("shipping_state");
+    trigger("shipping_country");
+
+  },[shippingSameAsBilling])
 
 
 
@@ -88,6 +108,7 @@ export default function AddressForm({ userInfo, id }) {
   const onSubmit = async (data) => {
     // Handle form submission here
     // console.log(addEnq.current.click())
+    clearErrors();
     try {
       const response = await updateProfile({ data });
       console?.log(response, response?.data?.message);
@@ -346,6 +367,14 @@ export default function AddressForm({ userInfo, id }) {
             <div className="d-flex align-items-center justify-content-between border-bottom pb-2">
               <h4 className="mb-0 text-2xl font-bold">Shipping Address</h4>
               <span className="text-muted cursor-pointer">
+                <input
+                  className="form-check-input mx-2"
+                  type="checkbox"
+                  name="checkAll"
+                  value="option1"
+                  onClick={()=>setShippingSameAsBilling(!shippingSameAsBilling)}
+                  checked={shippingSameAsBilling}
+                />
                 Copy Billing Address
               </span>
             </div>

@@ -44,6 +44,7 @@ export default function InvoiceModal({ show, hide, invId }) {
       setError,
       trigger,
       setValue,
+      clearErrors,
       formState: { errors },
     } = useForm({
       mode: "all",
@@ -175,7 +176,7 @@ export default function InvoiceModal({ show, hide, invId }) {
     const onSubmit = async (data) => {
       // Handle form submission here
       // console.log(addEnq.current.click())
-      
+      clearErrors();
         try {
         const response = await createPayment({ ...data,payment_mode:data?.payment_mode?.value,  transaction_proof: encodedFile, invoice_id:invId, date:convertToISODate(data?.date) });
         console?.log(response, response?.data?.message);
@@ -271,9 +272,12 @@ export default function InvoiceModal({ show, hide, invId }) {
                       </>
                     )}
                   </h5>
-                  {parseInt(data?.data?.invoice?.payments_limit) == parseInt(data?.data?.invoice?.payments_count) &&  <small className="badge badge-soft-danger pulse text-sm mt-2 flex items-center gap-2 w-fit">
-                    <i className="ri-alert-line"></i>Payment limit reached
-                  </small>}
+                  {parseInt(data?.data?.invoice?.payments_limit) ==
+                    parseInt(data?.data?.invoice?.payments_count) && (
+                    <small className="badge badge-soft-danger pulse text-sm mt-2 flex items-center gap-2 w-fit">
+                      <i className="ri-alert-line"></i>Payment limit reached
+                    </small>
+                  )}
                 </div>
                 <div>
                   <p className="text-gray-600 font-semibold">
@@ -630,7 +634,10 @@ export default function InvoiceModal({ show, hide, invId }) {
                                 Total Amount
                               </p>
                               <h5 className="fs-14 mb-0">
-                                ₹
+                                {
+                                  JSON.parse(sessionStorage.getItem("currency"))
+                                    ?.data?.currencies[0]?.symbol
+                                }
                                 <span id="total-amount">
                                   {data?.data?.invoice?.total}
                                 </span>
@@ -739,7 +746,14 @@ export default function InvoiceModal({ show, hide, invId }) {
                                           {item?.description}
                                         </p>
                                       </td>
-                                      <td>₹{item?.rate}</td>
+                                      <td>
+                                        {
+                                          JSON.parse(
+                                            sessionStorage.getItem("currency")
+                                          )?.data?.currencies[0]?.symbol
+                                        }
+                                        {item?.rate}
+                                      </td>
                                       <td>{item?.qty}</td>
                                       <td className="text-end">
                                         {parseFloat(item?.rate) *
@@ -753,11 +767,11 @@ export default function InvoiceModal({ show, hide, invId }) {
                             {/* <!--end table--> */}
                           </div>
                           <div className="border-top border-top-dashed mt-2">
-                            <table className="table table-borderless table-nowrap align-middle mb-0 ms-auto w-[280px]">
+                            <table className="table table-borderless table-nowrap align-middle mb-0 ms-auto w-[310px]">
                               <tbody>
                                 <tr className="border-top border-top-dashed mt-2">
                                   <td colSpan="1"></td>
-                                  <td colSpan="3" className="p-0">
+                                  <td colSpan="2" className="p-0">
                                     <table className="table table-borderless table-sm table-nowrap align-middle mb-0">
                                       <tbody>
                                         <tr className="!mr-2">
@@ -769,7 +783,7 @@ export default function InvoiceModal({ show, hide, invId }) {
                                               id="cart-subtotal"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${data?.data?.invoice?.subtotal}`}
+                                              value={`${JSON.parse(sessionStorage.getItem("currency"))?.data?.currencies[0]?.symbol} ${data?.data?.invoice?.subtotal}`}
                                             />
                                           </td>
                                         </tr>
@@ -777,14 +791,14 @@ export default function InvoiceModal({ show, hide, invId }) {
                                           <th scope="row">
                                             Estimated Tax (12.5%)
                                           </th>
-                                          <td>
+                                          <td colSpan={2}>
                                             <input
                                               type="text"
                                               className="form-control bg-light border-0"
                                               id="cart-tax"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${data?.data?.invoice?.total_tax}`}
+                                              value={`${JSON.parse(sessionStorage.getItem("currency"))?.data?.currencies[0]?.symbol} ${data?.data?.invoice?.total_tax}`}
                                             />
                                           </td>
                                         </tr>
@@ -795,7 +809,7 @@ export default function InvoiceModal({ show, hide, invId }) {
                                               (VELZON15)
                                             </small>
                                           </th>
-                                          <td>
+                                          <td colSpan={2}>
                                             <input
                                               type="text"
                                               className="form-control bg-light border-0"
@@ -808,14 +822,14 @@ export default function InvoiceModal({ show, hide, invId }) {
                                         </tr>
                                         <tr>
                                           <th scope="row">Shipping Charge</th>
-                                          <td>
+                                          <td colSpan={2}>
                                             <input
                                               type="text"
                                               className="form-control bg-light border-0"
                                               id="cart-shipping"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${
+                                              value={`${JSON.parse(sessionStorage.getItem("currency"))?.data?.currencies[0]?.symbol} ${
                                                 data?.data?.invoice
                                                   ?.shipping_charge
                                                   ? data?.data?.invoice
@@ -827,27 +841,27 @@ export default function InvoiceModal({ show, hide, invId }) {
                                         </tr>
                                         <tr className="border-top border-top-dashed">
                                           <th scope="row">Total Amount</th>
-                                          <td>
+                                          <td colSpan={2}>
                                             <input
                                               type="text"
                                               className="form-control bg-light border-0"
                                               id="cart-total"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${data?.data?.invoice?.total}`}
+                                              value={`${JSON.parse(sessionStorage.getItem("currency"))?.data?.currencies[0]?.symbol} ${data?.data?.invoice?.total}`}
                                             />
                                           </td>
                                         </tr>
                                         <tr className="border-top border-top-dashed">
                                           <th scope="row">Pending Amount</th>
-                                          <td>
+                                          <td colSpan={2}>
                                             <input
                                               type="text"
                                               className="form-control bg-light border-0"
                                               id="cart-total"
                                               placeholder="₹0.00"
                                               readOnly=""
-                                              value={`₹ ${parseFloat(
+                                              value={`${JSON.parse(sessionStorage.getItem("currency"))?.data?.currencies[0]?.symbol} ${parseFloat(
                                                 data?.data?.invoice
                                                   ?.pending_amount
                                               ).toFixed(2)}`}

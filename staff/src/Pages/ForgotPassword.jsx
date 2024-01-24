@@ -22,6 +22,7 @@ export default function ForgotPassword() {
   const {
     register,
     handleSubmit,
+    clearErrors,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -109,6 +110,7 @@ export default function ForgotPassword() {
 
   const onSubmit = async (data) => {
     // Handle form submission here
+    clearErrors();
     console.log(data);
     try {
       dispatch(showLoader());
@@ -155,7 +157,7 @@ export default function ForgotPassword() {
               <div className="col-md-8 col-lg-6 col-xl-5">
                 <div className="text-center mt-sm-5 mb-4 text-white-50">
                   <div>
-                    <a href="index.html" className="d-inline-block auth-logo">
+                    <a href="/" className="d-inline-block auth-logo">
                       <img src="/assets/images/logo-m.webp" alt="" height="" />
                     </a>
                   </div>
